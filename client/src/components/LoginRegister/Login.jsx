@@ -6,10 +6,10 @@ import Form from "../styles/Form";
 let userData = {};
 
 const Login = ({setFormSelector}) => {
-  // const [moveToRegister, setMoveToRegister] = useState(false);
   const [loginData, setLoginData] = useState({
     userName: "",
     password: "",
+    registerType: "login"
   });
 
   const handleChangeEvent = (e) => {

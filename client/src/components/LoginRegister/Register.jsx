@@ -12,6 +12,7 @@ const Register = ({setFormSelector}) => {
     password: "",
     dob: "",
     gender: "male",
+    registerType: "singup"
   });
 
   const handleChangeEvent = (e) => {
