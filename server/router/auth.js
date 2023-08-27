@@ -22,14 +22,14 @@ router.post("/login", async (req, res) => {
   const { registerType } = req.body;
 
   if (registerType === "signup") {
-      const { fullName, userName, email, password, dob, gender } = req.body;
+    const { fullName, userName, email, password, dob, gender } = req.body;
 
     if (!fullName || !userName || !email || !password || !dob || !gender) {
-        return res.status(400).json({error: "Please fillup full form" });
+      return res.status(400).json({ error: "Please fillup full form" });
     }
 
     try {
-        console.log("try ============");
+      console.log("try ============");
       const userExist = await User.findOne({
         email: email,
         userName: userName,

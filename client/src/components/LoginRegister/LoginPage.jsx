@@ -6,15 +6,14 @@ import Register from "./Register";
 
 const LoginPage = () => {
   const [formSelector, setFormSelector] = useState(true);
-
   return (
     <Wrapper>
       <div className="container">
         <LoginText />
         {formSelector ? (
-          <Login setFormSelector={setFormSelector} />
+          <Login setFormSelector={setFormSelector}/>
         ) : (
-          <Register setFormSelector={setFormSelector} />
+          <Register setFormSelector={setFormSelector}/>
         )}
       </div>
     </Wrapper>

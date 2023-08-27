@@ -1,18 +1,19 @@
 import React, { useState } from "react";
 import Button from "../styles/Button";
 import Form from "../styles/Form";
-
+import { useNavigate } from "react-router-dom";
 let userData = {};
 
-const Register = ({setFormSelector}) => {
+const Register = ({ setFormSelector}) => {
+  const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     fullName: "",
     userName: "",
     email: "",
     password: "",
     dob: "",
-    gender: "male",
-    registerType: "singup"
+    gender: "custom",
+    registerType: "signup",
   });
 
   const handleChangeEvent = (e) => {
@@ -22,20 +23,38 @@ const Register = ({setFormSelector}) => {
     }));
   };
 
-  const handleSubmitEvent = (e) => {
+  const handleSubmitEvent = async (e) => {
     e.preventDefault();
     userData = registerData;
-    // console.log(userData);
+
+    const res = await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...userData
+      }),
+    });
+
+    let data = await res.json();
+
+    if (res.status === 422 || !data) {
+      window.alert("Invalid registration");
+    } else {
+      window.alert("registration was successful");
+      navigate("/", { replace: true });
+    }
   };
 
-  const changeForm = ()=>{
-    setFormSelector(prev => !prev);
-  }
+  const changeForm = () => {
+    setFormSelector((prev) => !prev);
+  };
 
   return (
     <Form>
       <h1>Create An Account</h1>
-      <form onSubmit={handleSubmitEvent}>
+      <form onSubmit={handleSubmitEvent} method="POST">
         <input
           type="text"
           id="fullName"
@@ -93,9 +112,9 @@ const Register = ({setFormSelector}) => {
               value={registerData.gender}
               required
             >
+              <option value="custom">Custom</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
-              <option value="custom">Custom</option>
             </select>
           </div>
         </div>
