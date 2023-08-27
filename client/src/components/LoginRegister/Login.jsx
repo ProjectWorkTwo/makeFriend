@@ -4,6 +4,7 @@ import Button from "../styles/Button";
 import Form from "../styles/Form";
 import LoginText from "./LoginText";
 import FormMainWrapper from "../styles/FormMainWrapper";
+import ErrorMessage from "./ErrorMessage";
 
 let userData = {};
 
@@ -72,6 +73,7 @@ const Login = () => {
               required
             />
             <Button type="submit">Login</Button>
+            <ErrorMessage message="Wrong username or password"/>
             <Link to="/register">
               <p>If yet not registered?</p>
             </Link>

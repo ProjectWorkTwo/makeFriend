@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 
-import FormMainWrapper from '../styles/FormMainWrapper'
+import FormMainWrapper from "../styles/FormMainWrapper";
 import Button from "../styles/Button";
 import Form from "../styles/Form";
 
+
 import { Link, useNavigate } from "react-router-dom";
 import LoginText from "./LoginText";
-
+import ErrorMessage from "./ErrorMessage";
 
 let userData = {};
 
@@ -43,6 +44,8 @@ const Register = () => {
     });
 
     let data = await res.json();
+
+    console.log(data);
 
     if (res.status === 422 || !data) {
       window.alert("Invalid registration");
@@ -123,6 +126,8 @@ const Register = () => {
               </div>
             </div>
             <Button type="submit">Register</Button>
+            <ErrorMessage message="email addreess already exist" />
+            <ErrorMessage message="username already exist" />
             <Link to="/login">
               <p>If yet not registered?</p>
             </Link>

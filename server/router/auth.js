@@ -26,15 +26,19 @@ router.post("/register", async (req, res) => {
   }
 
   try {
-    console.log("try ============");
-    const userExist = await User.findOne({
-      email: email,
-      userName: userName,
-    });
+    const userNameExist = await User.findOne({ userName: userName });
 
-    if (userExist) {
-      return res.status(422).json({ message: "user exist" });
-    } else {
+    if (userNameExist) {
+      return res
+        .status(422)
+        .json({ message: "user exist", userNameExist: true });
+    }else {
+      const emailExist = await User.findOneAndRemove({ email: email });
+      if (emailExist) {
+        return res
+          .status(422)
+          .json({ message: "user exist", emailExist: true });
+      }
       const user = new User({
         fullName,
         userName,
