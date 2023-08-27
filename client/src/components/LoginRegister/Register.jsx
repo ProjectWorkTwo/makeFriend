@@ -1,10 +1,16 @@
 import React, { useState } from "react";
+
+import FormMainWrapper from '../styles/FormMainWrapper'
 import Button from "../styles/Button";
 import Form from "../styles/Form";
-import { useNavigate } from "react-router-dom";
+
+import { Link, useNavigate } from "react-router-dom";
+import LoginText from "./LoginText";
+
+
 let userData = {};
 
-const Register = ({ setFormSelector}) => {
+const Register = () => {
   const navigate = useNavigate();
   const [registerData, setRegisterData] = useState({
     fullName: "",
@@ -13,7 +19,6 @@ const Register = ({ setFormSelector}) => {
     password: "",
     dob: "",
     gender: "custom",
-    registerType: "signup",
   });
 
   const handleChangeEvent = (e) => {
@@ -27,13 +32,13 @@ const Register = ({ setFormSelector}) => {
     e.preventDefault();
     userData = registerData;
 
-    const res = await fetch("http://localhost:8000/login", {
+    const res = await fetch("http://localhost:8000/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        ...userData
+        ...userData,
       }),
     });
 
@@ -43,85 +48,88 @@ const Register = ({ setFormSelector}) => {
       window.alert("Invalid registration");
     } else {
       window.alert("registration was successful");
-      navigate("/", { replace: true });
+      navigate("/login", { replace: true });
     }
   };
 
-  const changeForm = () => {
-    setFormSelector((prev) => !prev);
-  };
-
   return (
-    <Form>
-      <h1>Create An Account</h1>
-      <form onSubmit={handleSubmitEvent} method="POST">
-        <input
-          type="text"
-          id="fullName"
-          placeholder="Full Name"
-          name="fullName"
-          onChange={handleChangeEvent}
-          value={registerData.fullName}
-          required
-        />
-        <input
-          type="text"
-          id="userName"
-          placeholder="Username"
-          name="userName"
-          onChange={handleChangeEvent}
-          value={registerData.userName}
-          required
-        />
-        <input
-          type="tel"
-          id="password"
-          placeholder="Email Address"
-          name="email"
-          onChange={handleChangeEvent}
-          value={registerData.email}
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          name="password"
-          onChange={handleChangeEvent}
-          value={registerData.password}
-          required
-        />
-        <div className="dobGender">
-          <div className="inputWrapper">
-            <label htmlFor="dob">Birth Date: </label>
+    <FormMainWrapper>
+      <div className="container">
+        <LoginText />
+        <Form>
+          <h1>Create An Account</h1>
+          <form onSubmit={handleSubmitEvent} method="POST">
             <input
-              type="date"
-              name="dob"
-              id="dob"
+              type="text"
+              id="fullName"
+              placeholder="Full Name"
+              name="fullName"
               onChange={handleChangeEvent}
-              value={registerData.dob}
+              value={registerData.fullName}
               required
             />
-          </div>
-          <div className="inputWrapper">
-            <label htmlFor="gender">Gender: </label>
-            <select
-              name="gender"
-              id="gender"
+            <input
+              type="text"
+              id="userName"
+              placeholder="Username"
+              name="userName"
               onChange={handleChangeEvent}
-              value={registerData.gender}
+              value={registerData.userName}
               required
-            >
-              <option value="custom">Custom</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-            </select>
-          </div>
-        </div>
-        <Button type="submit">Register</Button>
-        <p onClick={changeForm}>If yet not registered?</p>
-      </form>
-    </Form>
+            />
+            <input
+              type="tel"
+              id="password"
+              placeholder="Email Address"
+              name="email"
+              onChange={handleChangeEvent}
+              value={registerData.email}
+              required
+            />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              name="password"
+              onChange={handleChangeEvent}
+              value={registerData.password}
+              required
+            />
+            <div className="dobGender">
+              <div className="inputWrapper">
+                <label htmlFor="dob">Birth Date: </label>
+                <input
+                  type="date"
+                  name="dob"
+                  id="dob"
+                  onChange={handleChangeEvent}
+                  value={registerData.dob}
+                  required
+                />
+              </div>
+              <div className="inputWrapper">
+                <label htmlFor="gender">Gender: </label>
+                <select
+                  name="gender"
+                  id="gender"
+                  onChange={handleChangeEvent}
+                  value={registerData.gender}
+                  required
+                >
+                  <option value="custom">Custom</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+            <Button type="submit">Register</Button>
+            <Link to="/login">
+              <p>If yet not registered?</p>
+            </Link>
+          </form>
+        </Form>
+      </div>
+    </FormMainWrapper>
   );
 };
 

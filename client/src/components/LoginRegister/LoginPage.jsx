@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
+
 import LoginText from "./LoginText";
 import Login from "./Login";
 import Register from "./Register";
@@ -7,22 +9,30 @@ import Register from "./Register";
 const LoginPage = () => {
   const [formSelector, setFormSelector] = useState(true);
   return (
-    <Wrapper>
+    <FormMainWrapper>
       <div className="container">
-        <LoginText />
-        {formSelector ? (
+        {/* <LoginText /> */}
+        {/* {formSelector ? (
           <Login setFormSelector={setFormSelector}/>
         ) : (
           <Register setFormSelector={setFormSelector}/>
-        )}
+        )} */}
+        <Router>
+          <Route path="/register">
+            <Register />
+          </Route>
+          <Route path="/login">
+            <Login />
+          </Route>
+        </Router>
       </div>
-    </Wrapper>
+    </FormMainWrapper>
   );
 };
 
 export default LoginPage;
 
-const Wrapper = styled.section`
+const FormMainWrapper = styled.section`
   padding: 30px 0;
   width: 100%;
   min-height: 100vh;

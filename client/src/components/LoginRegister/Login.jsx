@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-
+import { Link } from "react-router-dom";
 import Button from "../styles/Button";
 import Form from "../styles/Form";
+import LoginText from "./LoginText";
+import FormMainWrapper from "../styles/FormMainWrapper";
 
 let userData = {};
 
-const Login = ({setFormSelector}) => {
+const Login = () => {
   const [loginData, setLoginData] = useState({
     userName: "",
     password: "",
-    registerType: "login"
   });
 
   const handleChangeEvent = (e) => {
@@ -25,36 +26,39 @@ const Login = ({setFormSelector}) => {
     console.log(userData);
   };
 
-  const changeForm = ()=>{
-    setFormSelector(prev => !prev);
-  }
-
   return (
-    <Form>
-      <h1>Login Your Account</h1>
-      <form onSubmit={handleSubmitEvent}>
-        <input
-          type="text"
-          id="userName"
-          placeholder="Username"
-          name="userName"
-          onChange={handleChangeEvent}
-          value={loginData.userName}
-          required
-        />
-        <input
-          type="password"
-          id="password"
-          placeholder="Password"
-          name="password"
-          onChange={handleChangeEvent}
-          value={loginData.password}
-          required
-        />
-        <Button type="submit">Login</Button>
-        <p onClick={changeForm}>If yet not registered?</p>
-      </form>
-    </Form>
+    <FormMainWrapper>
+      <div className="container">
+        <LoginText />
+        <Form>
+          <h1>Login Your Account</h1>
+          <form onSubmit={handleSubmitEvent}>
+            <input
+              type="text"
+              id="userName"
+              placeholder="Username"
+              name="userName"
+              onChange={handleChangeEvent}
+              value={loginData.userName}
+              required
+            />
+            <input
+              type="password"
+              id="password"
+              placeholder="Password"
+              name="password"
+              onChange={handleChangeEvent}
+              value={loginData.password}
+              required
+            />
+            <Button type="submit">Login</Button>
+            <Link to="/register">
+              <p>If yet not registered?</p>
+            </Link>
+          </form>
+        </Form>
+      </div>
+    </FormMainWrapper>
   );
 };
 
