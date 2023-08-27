@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Button from "../styles/Button";
 import Form from "../styles/Form";
 import LoginText from "./LoginText";
@@ -8,6 +8,7 @@ import FormMainWrapper from "../styles/FormMainWrapper";
 let userData = {};
 
 const Login = () => {
+  const navigate = useNavigate();
   const [loginData, setLoginData] = useState({
     userName: "",
     password: "",
@@ -20,10 +21,29 @@ const Login = () => {
     }));
   };
 
-  const handleSubmitEvent = (e) => {
+  const handleSubmitEvent = async (e) => {
     e.preventDefault();
     userData = loginData;
     console.log(userData);
+
+    const res = await fetch("http://localhost:8000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...userData,
+      }),
+    });
+
+    let data = await res.json();
+
+    if (res.status === 500 || !data) {
+      window.alert("Invalid registration");
+    } else {
+      window.alert("registration was successful");
+      navigate("/", { replace: true });
+    }
   };
 
   return (
