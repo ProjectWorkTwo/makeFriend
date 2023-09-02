@@ -47,6 +47,7 @@ const Login = () => {
         setLoginErrorToggle(prev => false);
       }
     } else {
+      localStorage.setItem('userLoginData', JSON.stringify(loginData));
       navigate("/", { replace: true });
     }
   };

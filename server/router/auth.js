@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const authenticate = require("../middleware/authenticate");
 
 dotenv.config({ path: "./config.env" });
 require("../db/connection");
@@ -32,7 +33,7 @@ router.post("/register", async (req, res) => {
       return res
         .status(422)
         .json({ message: "user exist", userNameExist: true });
-    }else {
+    } else {
       const emailExist = await User.findOneAndRemove({ email: email });
       if (emailExist) {
         return res
@@ -72,10 +73,10 @@ router.post("/login", async (req, res) => {
   try {
     let userExist = null;
     let isPasswordMatch = null;
-    try{
+    try {
       userExist = await User.findOne({ userName });
       isPasswordMatch = await bcrypt.compare(password, userExist.password);
-    }catch(e){
+    } catch (e) {
       userExist = undefined;
       isPasswordMatch = undefined;
     }
@@ -88,11 +89,17 @@ router.post("/login", async (req, res) => {
       });
       res.status(201).json({ response: "Your are logged in" });
     } else {
-      res.status(500).json({ response: "Wrong email or password", errorExist: true});
+      res
+        .status(500)
+        .json({ response: "Wrong email or password", errorExist: true });
     }
   } catch (error) {
     res.json({ error: "Server Error" });
   }
+});
+
+router.get("/", authenticate, (req, res) => {
+  res.send(req.rootUser);
 });
 
 module.exports = router;
