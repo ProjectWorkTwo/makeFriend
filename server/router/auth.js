@@ -48,7 +48,6 @@ router.post("/register", async (req, res) => {
         gender,
       });
 
-      console.log(user);
       const userRegister = await user.save();
 
       if (userRegister) {
@@ -71,8 +70,16 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    const userExist = await User.findOne({ userName });
-    const isPasswordMatch = await bcrypt.compare(password, userExist.password);
+    let userExist = null;
+    let isPasswordMatch = null;
+    try{
+      userExist = await User.findOne({ userName });
+      isPasswordMatch = await bcrypt.compare(password, userExist.password);
+    }catch(e){
+      userExist = undefined;
+      isPasswordMatch = undefined;
+    }
+
     if (userExist && isPasswordMatch) {
       const token = await userExist.generateAuthToken();
       res.cookie("jwtToken", token, {
@@ -81,7 +88,7 @@ router.post("/login", async (req, res) => {
       });
       res.status(201).json({ response: "Your are logged in" });
     } else {
-      res.status(500).json({ response: "Wrong email or password" });
+      res.status(500).json({ response: "Wrong email or password", errorExist: true});
     }
   } catch (error) {
     res.json({ error: "Server Error" });

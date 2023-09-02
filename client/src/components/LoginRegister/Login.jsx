@@ -10,6 +10,7 @@ let userData = {};
 
 const Login = () => {
   const navigate = useNavigate();
+  const [loginErrorToggle, setLoginErrorToggle] = useState(false);
   const [loginData, setLoginData] = useState({
     userName: "",
     password: "",
@@ -40,9 +41,12 @@ const Login = () => {
     let data = await res.json();
 
     if (res.status === 500 || !data) {
-      window.alert("Invalid registration");
+      if (data.errorExist) {
+        setLoginErrorToggle(prev => true);
+      } else {
+        setLoginErrorToggle(prev => false);
+      }
     } else {
-      window.alert("registration was successful");
       navigate("/", { replace: true });
     }
   };
@@ -73,7 +77,7 @@ const Login = () => {
               required
             />
             <Button type="submit">Login</Button>
-            <ErrorMessage message="Wrong username or password"/>
+            {loginErrorToggle && <ErrorMessage message="Wrong username or password" />}
             <Link to="/register">
               <p>If yet not registered?</p>
             </Link>

@@ -13,6 +13,8 @@ let userData = {};
 
 const Register = () => {
   const navigate = useNavigate();
+  const [userNameToggle, setUserNameToggle] = useState(false);
+  const [userEmailToggle, setUserEmailToggle] = useState(false);
   const [registerData, setRegisterData] = useState({
     fullName: "",
     userName: "",
@@ -45,11 +47,23 @@ const Register = () => {
 
     let data = await res.json();
 
-    console.log(data);
-
     if (res.status === 422 || !data) {
-      window.alert("Invalid registration");
+      console.log(data.userNameExist, data.emailExist);
+      if(data.userNameExist){
+        setUserNameToggle(prev => true);
+      }else{
+        setUserNameToggle(prev => false);
+      }
+
+      if(data.emailExist){
+        setUserEmailToggle(prev => true);
+      }else{
+        setUserEmailToggle(prev => false);
+      }
+
+
     } else {
+
       window.alert("registration was successful");
       navigate("/login", { replace: true });
     }
@@ -126,8 +140,8 @@ const Register = () => {
               </div>
             </div>
             <Button type="submit">Register</Button>
-            <ErrorMessage message="email addreess already exist" />
-            <ErrorMessage message="username already exist" />
+            {userNameToggle && <ErrorMessage message="username already exist" />}
+            {userEmailToggle && <ErrorMessage message="email addreess already exist" />}
             <Link to="/login">
               <p>If yet not registered?</p>
             </Link>
