@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import ButtonStyle from "../styles/Button";
 import ErrorMessage from "../LoginRegister/ErrorMessage";
@@ -8,22 +8,6 @@ import SuccessMessage from "../SuccessMessage";
 
 import { FaXmark } from "react-icons/fa6";
 
-// const modules = {
-//     toolbar:[
-//         [{'header': [1, 2, false]}],
-//         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-//         [{'list': 'ordered'}, {'list': 'bullet'}, {'indent': -1}],
-//         ['link', 'image'],
-//         ['clean']
-//     ]
-// }
-
-// const formates = [
-//     'header',
-//     'bold', 'italic', 'underline', 'strike', 'blockquote',
-//     'list', 'bullet', 'indent',
-//     'link', 'image'
-// ]
 const date = new Date();
 
 const monthNames = [
@@ -42,6 +26,7 @@ const monthNames = [
 ];
 
 const CreatePost = ({ useShowCreatePost }) => {
+  const navigate = useNavigate();
   const [createPostData, setCreatePostData] = useState({
     title: "",
     description: "",
@@ -70,6 +55,10 @@ const CreatePost = ({ useShowCreatePost }) => {
 
   const createPostSubmission = async (e) => {
     e.preventDefault();
+    if(!localStorage.getItem('userLoginData')){
+      navigate("/login", { replace: true });
+      return;
+    }
 
     if (createPostData.title === "" || createPostData.description === "") {
       setPostError((prev) => true);

@@ -9,6 +9,7 @@ dotenv.config({ path: "./config.env" });
 require("../db/connection");
 const User = require("../model/userSchema");
 const UserPosts = require("../model/postSchema");
+const UserSerialPost = require("../model/serialPostSchema");
 
 router.get("/", (req, res) => {
   res.send("<h1>Hello world from server</h1>");
@@ -113,9 +114,16 @@ router.post("/createPost", async (req, res) => {
   console.log(req.body);
   try {
     const userNameExist = await User.findOne({ userName });
-
+    
     console.log("==> " + userNameExist);
-
+    
+    await new UserSerialPost({ 
+      userName,
+      title,
+      description,
+      createdDate,
+      currentTime,
+    }).save();
     try {
       const userPostExist = await UserPosts.findOne({ userName });
       userPostExist.postData = userPostExist.postData.concat({
@@ -127,8 +135,6 @@ router.post("/createPost", async (req, res) => {
       const userPostUpload = await userPostExist.save();
 
       if(userPostUpload){
-        const allPost = await UserPosts.find();
-        console.log(allPost);
         res.status(201).json({message: 'Posted successfully'});
         res.end();
       }else{
@@ -138,14 +144,25 @@ router.post("/createPost", async (req, res) => {
       
     } catch (error) {
       console.log("==============");
-      const userPostSetting = await new Post({ userName }).save();
+      const userPostExist = await new UserPosts({ userName }).save();
+      // const userPostSetting = await new Post({ userName }).save();
       console.log(error);
     }
   } catch (err) {
     console.log(err);
   }
-
-  // res.send({ message: "uploaded" });
 });
+
+router.get('/getPost', async (req, res)=>{
+  let allPostData = [];
+
+  try{
+    allPostData = await UserPosts.find();
+    console.log(allPostData);
+  }catch(err){
+    console.log(err);
+  }
+  res.send(allPostData);
+})
 
 module.exports = router;
