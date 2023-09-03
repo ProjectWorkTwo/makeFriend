@@ -4,6 +4,7 @@ const postSchema = new mongoose.Schema({
   userName: {
     type: String,
     required: true,
+    unique: true,
   },
   postData: [
     {

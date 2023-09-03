@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import "react-quill/dist/quill.snow.css";
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import ButtonStyle from "../styles/Button";
@@ -144,17 +143,12 @@ const CreatePostSyle = styled.div`
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 999;
   display: grid;
   place-items: center;
 
-  h1 {
-    padding-bottom: 15px;
-    color: var(--primaryColor);
-    user-select: none;
-  }
-
+  
   .wrapper {
     position: relative;
     background: #fff;
@@ -162,11 +156,11 @@ const CreatePostSyle = styled.div`
     max-width: 500px;
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-      rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     padding: 20px;
     text-align: center;
-
+    
     & > svg {
       position: absolute;
       right: 20px;
@@ -176,13 +170,18 @@ const CreatePostSyle = styled.div`
       color: var(--primaryColor);
       cursor: pointer;
     }
-
+    
+    h1 {
+      padding-bottom: 15px;
+      color: var(--primaryColor);
+      user-select: none;
+    }
     form {
       width: 100%;
       display: flex;
       gap: 20px;
       flex-direction: column;
-
+      
       input,
       textarea {
         border: 2px solid var(--primaryColor);

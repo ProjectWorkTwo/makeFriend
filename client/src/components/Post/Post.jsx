@@ -6,14 +6,35 @@ import { FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const Post = ({ postData }) => {
+  const [liked, setLiked] = useState(false);
+  const [totalLike, setTotalLike] = useState(postData.likeNum);
+  // console.log(postData);
   const {
+    fullName,
     userName,
-    postTitle,
-    postedDate,
-    postDescription,
+    title,
+    createdDate,
+    description,
     likeNum,
     shareNum,
   } = postData;
+
+  const likeHandle = async ()=>{
+    setLiked(prev => !prev);
+    setTotalLike(prev => (
+      prev = liked? prev-1: prev+1
+    ))
+
+    const res = await fetch('http://localhost:8000/likingPost', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        totalLike,
+      })
+    })
+  }
   return (
     <PostStyle>
       <div className="wrapper">
@@ -23,19 +44,24 @@ const Post = ({ postData }) => {
           </div>
           <div className="info">
             <h4>
-              <Link to={`/profile/${userName}`}>{userName}</Link>
+              <Link to={`/profile/${userName}`}>
+                {fullName}
+              </Link>
             </h4>
-            <p>{postedDate}</p>
+            <Link to={`/profile/${userName}`} className="userName">
+              {userName}
+            </Link>
+            <p>{createdDate}</p>
           </div>
         </div>
         <div className="center">
-          <h3>{postTitle}</h3>
+          <h3>{title}</h3>
           <hr />
-          <p>{postDescription}</p>
+          <p>{description}</p>
         </div>
         <div className="bottom">
-          <button className="like">
-            <BsFillHeartFill /> <span>{likeNum}</span>
+          <button className={`like ${liked ? 'active': ''}`} onClick={likeHandle}>
+            <BsFillHeartFill /> <span>{totalLike}</span>
           </button>
           <button className="share">
             <FaShare /> <span>{shareNum}</span>
@@ -82,10 +108,12 @@ const PostStyle = styled.div`
     .info {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 2px;
 
       h4 {
         font-size: 22px;
+        text-transform: capitalize;
+        line-height: normal;
         a {
           text-decoration: none;
           color: var(--primaryColor);
@@ -96,9 +124,13 @@ const PostStyle = styled.div`
           }
         }
       }
+      .userName{
+        font-size: 15px;
+        color: var(--primaryColor);
+      }
 
       p {
-        font-size: 16px;
+        font-size: 14px;
       }
     }
   }
@@ -140,7 +172,8 @@ const PostStyle = styled.div`
       align-items: center;
       gap: 15px;
 
-      &:hover {
+      &:hover,
+      &.active {
         background: var(--primaryColor);
         transform: scale(0.95);
       }
@@ -149,7 +182,8 @@ const PostStyle = styled.div`
         font-size: 20px;
         transition: 0.3s ease-in-out;
       }
-      &:hover span {
+      &:hover span,
+      &.active span {
         color: #fff;
       }
 
@@ -159,7 +193,8 @@ const PostStyle = styled.div`
         color: var(--primaryColor);
         transition: 0.3s ease-in-out;
       }
-      &:hover svg {
+      &:hover svg,
+      &.active svg {
         color: var(--secondaryColor);
       }
     }

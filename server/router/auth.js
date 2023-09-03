@@ -67,7 +67,7 @@ router.post("/register", async (req, res) => {
       }
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 });
 router.post("/login", async (req, res) => {
@@ -89,11 +89,11 @@ router.post("/login", async (req, res) => {
     }
 
     if (userExist && isPasswordMatch) {
-      const token = await userExist.generateAuthToken();
-      res.cookie("jwtToken", token, {
-        expires: new Date(Date.now() + 2589000000),
-        httpOnly: true,
-      });
+      // const token = await userExist.generateAuthToken();
+      // res.cookie("jwtToken", token, {
+      //   expires: new Date(Date.now() + 2589000000),
+      //   httpOnly: true,
+      // });
       res.status(201).json({ response: "Your are logged in" });
     } else {
       res
@@ -111,20 +111,13 @@ router.get("/", authenticate, (req, res) => {
 
 router.post("/createPost", async (req, res) => {
   const { userName, title, description, createdDate, currentTime } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   try {
     const userNameExist = await User.findOne({ userName });
-    
-    console.log("==> " + userNameExist);
-    
-    await new UserSerialPost({ 
-      userName,
-      title,
-      description,
-      createdDate,
-      currentTime,
-    }).save();
+
     try {
+
+      // This is mainly for profile based post showing
       const userPostExist = await UserPosts.findOne({ userName });
       userPostExist.postData = userPostExist.postData.concat({
         title,
@@ -133,36 +126,51 @@ router.post("/createPost", async (req, res) => {
         currentTime,
       });
       const userPostUpload = await userPostExist.save();
+      
+      // Setting user post for home page showing 
+      await new UserSerialPost({
+        fullName: userNameExist.fullName,
+        userName,
+        title,
+        description,
+        createdDate,
+        currentTime,
+        likeNum: 0,
+        shareNum: 0,
+      }).save();
 
-      if(userPostUpload){
-        res.status(201).json({message: 'Posted successfully'});
+      if (userPostUpload) {
+        res.status(201).json({ message: "Posted successfully" });
         res.end();
-      }else{
-        res.status(500).json({error: 'Faild to post'})
+      } else {
+        res.status(500).json({ error: "Faild to post" });
         res.end();
       }
-      
     } catch (error) {
-      console.log("==============");
+      // console.log("==============");
       const userPostExist = await new UserPosts({ userName }).save();
-      // const userPostSetting = await new Post({ userName }).save();
-      console.log(error);
+      // console.log(error);
     }
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
 });
 
-router.get('/getPost', async (req, res)=>{
+router.get("/getPost", async (req, res) => {
   let allPostData = [];
 
-  try{
-    allPostData = await UserPosts.find();
+  try {
+    allPostData = await UserSerialPost.find();
+    console.log("====================>>");
     console.log(allPostData);
-  }catch(err){
+  } catch (err) {
     console.log(err);
   }
   res.send(allPostData);
+});
+
+router.post('/likingPost', async (req, res)=>{
+  
 })
 
 module.exports = router;
