@@ -12,58 +12,58 @@ const Posts = () => {
   };
 
   const allPosts = [
-      {
-        userName: "UserName1",
-        postTitle: "Post Title Here1",
-        postedDate: "13 May 2023",
-        postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+    {
+      userName: "UserName1",
+      postTitle: "Post Title Here1",
+      postedDate: "13 May 2023",
+      postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
         sint fugiat quibusdam porro temporibus ipsam recusandae fugit
         molestiae, id eveniet delectus minima in omnis eaque!`,
-        likeNum: 550,
-        shareNum: 20,
-      },
-      {
-        userName: "UserName2",
-        postTitle: "Post Title Here2",
-        postedDate: "13 May 2023",
-        postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+      likeNum: 550,
+      shareNum: 20,
+    },
+    {
+      userName: "UserName2",
+      postTitle: "Post Title Here2",
+      postedDate: "13 May 2023",
+      postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
         sint fugiat quibusdam porro temporibus ipsam recusandae fugit
         molestiae, id eveniet delectus minima in omnis eaque!`,
-        likeNum: 550,
-        shareNum: 20,
-      },
-      {
-        userName: "UserName3",
-        postTitle: "Post Title Here3",
-        postedDate: "13 May 2023",
-        postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+      likeNum: 550,
+      shareNum: 20,
+    },
+    {
+      userName: "UserName3",
+      postTitle: "Post Title Here3",
+      postedDate: "13 May 2023",
+      postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
         sint fugiat quibusdam porro temporibus ipsam recusandae fugit
         molestiae, id eveniet delectus minima in omnis eaque!`,
-        likeNum: 550,
-        shareNum: 20,
-      },
-      {
-        userName: "UserName4",
-        postTitle: "Post Title Here4",
-        postedDate: "13 May 2023",
-        postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+      likeNum: 550,
+      shareNum: 20,
+    },
+    {
+      userName: "UserName4",
+      postTitle: "Post Title Here4",
+      postedDate: "13 May 2023",
+      postDescription: `Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
+        sint fugiat quibusdam porro temporibus ipsam recusandae fugit
+        molestiae, id eveniet delectus minima in omnis eaque!.
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Corrupti
         sint fugiat quibusdam porro temporibus ipsam recusandae fugit
         molestiae, id eveniet delectus minima in omnis eaque!`,
-        likeNum: 550,
-        shareNum: 20,
-      },
-  ]
+      likeNum: 550,
+      shareNum: 20,
+    },
+  ];
 
   return (
     <PostStyle>
       <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
       {showCreatePost && <CreatePost useShowCreatePost={useShowCreatePost} />}
-      {
-        allPosts.map((postData)=>{
-            return <Post postData={postData} />
-        })
-      }
-      
+      {allPosts.map((postData) => {
+        return <Post postData={postData} key={postData.userName} />;
+      })}
     </PostStyle>
   );
 };

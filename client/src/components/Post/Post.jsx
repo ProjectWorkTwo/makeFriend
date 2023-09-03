@@ -5,8 +5,16 @@ import { BsFillHeartFill } from "react-icons/bs";
 import { FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const Post = ({postData}) => {
-    const {userName, postTitle, postedDate, postDescription, likeNum, shareNum} = postData;  return (
+const Post = ({ postData }) => {
+  const {
+    userName,
+    postTitle,
+    postedDate,
+    postDescription,
+    likeNum,
+    shareNum,
+  } = postData;
+  return (
     <PostStyle>
       <div className="wrapper">
         <div className="top">
@@ -106,9 +114,10 @@ const PostStyle = styled.div`
       width: 100%;
       height: 2px;
       background: var(--primaryColor500);
-      margin: 10px 0;
+      margin: 15px 0;
     }
     p {
+      font-size: 16px;
       color: var(--lightText);
     }
   }
@@ -129,18 +138,18 @@ const PostStyle = styled.div`
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
 
       &:hover {
         background: var(--primaryColor);
         transform: scale(0.95);
       }
 
-      span{
-        font-size: 18px;
+      span {
+        font-size: 20px;
         transition: 0.3s ease-in-out;
       }
-      &:hover span{
+      &:hover span {
         color: #fff;
       }
 

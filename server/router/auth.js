@@ -8,6 +8,7 @@ const authenticate = require("../middleware/authenticate");
 dotenv.config({ path: "./config.env" });
 require("../db/connection");
 const User = require("../model/userSchema");
+const UserPosts = require("../model/postSchema");
 
 router.get("/", (req, res) => {
   res.send("<h1>Hello world from server</h1>");
@@ -49,7 +50,12 @@ router.post("/register", async (req, res) => {
         gender,
       });
 
+      const newUserPost = new UserPosts({
+        userName,
+      });
+
       const userRegister = await user.save();
+      const userPostSetting = await newUserPost.save();
 
       if (userRegister) {
         res.status(201).json({ message: "Register successful" });
@@ -100,6 +106,46 @@ router.post("/login", async (req, res) => {
 
 router.get("/", authenticate, (req, res) => {
   res.send(req.rootUser);
+});
+
+router.post("/createPost", async (req, res) => {
+  const { userName, title, description, createdDate, currentTime } = req.body;
+  console.log(req.body);
+  try {
+    const userNameExist = await User.findOne({ userName });
+
+    console.log("==> " + userNameExist);
+
+    try {
+      const userPostExist = await UserPosts.findOne({ userName });
+      userPostExist.postData = userPostExist.postData.concat({
+        title,
+        description,
+        createdDate,
+        currentTime,
+      });
+      const userPostUpload = await userPostExist.save();
+
+      if(userPostUpload){
+        const allPost = await UserPosts.find();
+        console.log(allPost);
+        res.status(201).json({message: 'Posted successfully'});
+        res.end();
+      }else{
+        res.status(500).json({error: 'Faild to post'})
+        res.end();
+      }
+      
+    } catch (error) {
+      console.log("==============");
+      const userPostSetting = await new Post({ userName }).save();
+      console.log(error);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+
+  // res.send({ message: "uploaded" });
 });
 
 module.exports = router;

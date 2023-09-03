@@ -17,6 +17,7 @@
   --whiteColor: #ffffff;
 
   --errorColor: #d20808;
+  --successColor: #00a123;
 }
 body {
   width: 100%;
@@ -29,7 +30,8 @@ input,
 textarea,
 label,
 select,
-option {
+option ,
+pre{
   font-family: var(--primaryFont);
 }
 .container {
