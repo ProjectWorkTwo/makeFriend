@@ -1,42 +1,92 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { styled } from "styled-components";
 import avatar from "../../assets/avatar/avatar1.png";
 import { BsFillHeartFill } from "react-icons/bs";
 import { FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import ShareAndLikeList from "./ShareAndLikeList";
 
 const Post = ({ postData }) => {
-  const [liked, setLiked] = useState(false);
-  const [totalLike, setTotalLike] = useState(postData.likeNum);
-  // console.log(postData);
   const {
     fullName,
     userName,
     title,
     createdDate,
     description,
-    likeNum,
-    shareNum,
+    likeList,
+    shareList,
+    _id: postId,
   } = postData;
+  const accountAuthorUserName = JSON.parse(
+    localStorage.getItem("userLoginData")
+  );
+  // console.log(likeList);
+  // console.log(accountAuthorUserName.userName);
+  // const addOrRemove = true;
+  // const [allLikeList, setAllLikeList] = useState(likeList);
+  // const [liked, setLiked] = useState(
+  //   Boolean(
+  //     allLikeList.find(
+  //       (item) => item.userName === accountAuthorUserName.userName
+  //     )
+  //   )
+  // );
 
-  const likeHandle = async ()=>{
-    setLiked(prev => !prev);
-    setTotalLike(prev => (
-      prev = liked? prev-1: prev+1
-    ))
+  const [showHideLike, setShowHideLike] = useState(false);
+  const [showHideShare, setShowHideShare] = useState(false);
 
-    const res = await fetch('http://localhost:8000/likingPost', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        totalLike,
-      })
-    })
-  }
+  const updateLike = async () => {
+    setAllLikeList(likeList);
+  };
+  // useEffect(() => {
+  //   updateLike();
+  // });
+
+  const handleShowHideLike = () => {
+    setShowHideLike((prev) => true);
+    setShowHideShare((prev) => false);
+  };
+  const handleShowHideShare = () => {
+    setShowHideShare((prev) => true);
+    setShowHideLike((prev) => false);
+  };
+
+  const closeShareAndLikePopUp = () => {
+    setShowHideLike(false);
+    setShowHideShare(false);
+  };
+
+  const likeHandle = async () => {
+    // const res = await fetch("http://localhost:8000/likingPost", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     userName,
+    //     fullName,
+    //     addOrRemove,
+    //     postId
+    //   }),
+    // });
+
+    // let data = await res.json();
+  };
   return (
     <PostStyle>
+      {showHideLike && (
+        <ShareAndLikeList
+          reacterList={allLikeList}
+          closeShareAndLikePopUp={closeShareAndLikePopUp}
+        />
+      )}
+      {showHideShare && (
+        <ShareAndLikeList
+          reacterList={shareList}
+          closeShareAndLikePopUp={closeShareAndLikePopUp}
+        />
+      )}
+
       <div className="wrapper">
         <div className="top">
           <div className="avatar">
@@ -44,9 +94,7 @@ const Post = ({ postData }) => {
           </div>
           <div className="info">
             <h4>
-              <Link to={`/profile/${userName}`}>
-                {fullName}
-              </Link>
+              <Link to={`/profile/${userName}`}>{fullName}</Link>
             </h4>
             <Link to={`/profile/${userName}`} className="userName">
               {userName}
@@ -60,12 +108,31 @@ const Post = ({ postData }) => {
           <p>{description}</p>
         </div>
         <div className="bottom">
-          <button className={`like ${liked ? 'active': ''}`} onClick={likeHandle}>
-            <BsFillHeartFill /> <span>{totalLike}</span>
-          </button>
-          <button className="share">
-            <FaShare /> <span>{shareNum}</span>
-          </button>
+          <div className="likeInfo">
+            <span onClick={handleShowHideLike}>
+              {likeList.length >= 1000
+                ? `${Number((likeList.length / 1000).toFixed(1))} k `
+                : likeList.length + " "}
+              Likes
+            </span>
+            <button
+              className={`like ${liked ? "active" : ""}`}
+              onClick={likeHandle}
+            >
+              <BsFillHeartFill />
+            </button>
+          </div>
+          <div className="shareInfo">
+            <span onClick={handleShowHideShare}>
+              {shareList.length >= 1000
+                ? `${Number((shareList.length / 1000).toFixed(1))} k `
+                : shareList.length + " "}{" "}
+              Shares
+            </span>
+            <button className="share">
+              <FaShare />
+            </button>
+          </div>
         </div>
       </div>
     </PostStyle>
@@ -124,7 +191,7 @@ const PostStyle = styled.div`
           }
         }
       }
-      .userName{
+      .userName {
         font-size: 15px;
         color: var(--primaryColor);
       }
@@ -158,44 +225,60 @@ const PostStyle = styled.div`
     display: flex;
     gap: 10px;
 
-    button {
-      width: 100%;
-      height: 100%;
-      border-radius: 5px;
-      background: #fff;
-      padding: 10px;
-      cursor: pointer;
-      transition: 0.3s ease-in-out;
-      border: 2px solid var(--primaryColor);
+    .likeInfo,
+    .shareInfo {
       display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-
-      &:hover,
-      &.active {
-        background: var(--primaryColor);
-        transform: scale(0.95);
-      }
+      flex-direction: column;
+      width: 100%;
+      gap: 5px;
 
       span {
-        font-size: 20px;
-        transition: 0.3s ease-in-out;
-      }
-      &:hover span,
-      &.active span {
-        color: #fff;
+        cursor: pointer;
+
+        &:hover {
+          text-decoration: underline;
+        }
       }
 
-      svg {
-        width: 25px;
-        height: 25px;
-        color: var(--primaryColor);
+      button {
+        width: 100%;
+        height: 100%;
+        border-radius: 5px;
+        background: #fff;
+        padding: 10px;
+        cursor: pointer;
         transition: 0.3s ease-in-out;
-      }
-      &:hover svg,
-      &.active svg {
-        color: var(--secondaryColor);
+        border: 2px solid var(--primaryColor);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+
+        &:hover,
+        &.active {
+          background: var(--primaryColor);
+          transform: scale(0.95);
+        }
+
+        span {
+          font-size: 20px;
+          transition: 0.3s ease-in-out;
+        }
+        &:hover span,
+        &.active span {
+          color: #fff;
+        }
+
+        svg {
+          width: 25px;
+          height: 25px;
+          color: var(--primaryColor);
+          transition: 0.3s ease-in-out;
+        }
+        &:hover svg,
+        &.active svg {
+          color: var(--secondaryColor);
+        }
       }
     }
   }

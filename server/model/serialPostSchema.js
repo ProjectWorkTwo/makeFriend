@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const serialPostSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    required: true
+    required: true,
   },
   userName: {
     type: String,
@@ -25,12 +25,19 @@ const serialPostSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  likeNum: {
-    type: Number,
-  },
-  shareNum: {
-    type: Number,
-  },
+  likeList: [
+    {
+      userName: {
+        type: String,
+        unique: true,
+      },
+      fullName: {
+        type: String,
+        unique: true,
+      },
+    },
+  ],
+  shareList: [],
 });
 
 const UserSerialPost = mongoose.model("userSerialPost", serialPostSchema);

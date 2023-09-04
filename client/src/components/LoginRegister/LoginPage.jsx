@@ -11,12 +11,6 @@ const LoginPage = () => {
   return (
     <FormMainWrapper>
       <div className="container">
-        {/* <LoginText /> */}
-        {/* {formSelector ? (
-          <Login setFormSelector={setFormSelector}/>
-        ) : (
-          <Register setFormSelector={setFormSelector}/>
-        )} */}
         <Router>
           <Route path="/register">
             <Register />

@@ -4,7 +4,7 @@ import Button from "../styles/Button";
 import Form from "../styles/Form";
 import LoginText from "./LoginText";
 import FormMainWrapper from "../styles/FormMainWrapper";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../ErrorMessage";
 
 let userData = {};
 

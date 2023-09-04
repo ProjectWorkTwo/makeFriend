@@ -26,7 +26,6 @@ const LoginTextStyle = styled.div`
   background: url(${textBg});
   background-size: cover;
   background-position: center center;
-  background-attachment: fixed;
   
   @media (max-width: 991px) {
     order : 2;

@@ -7,7 +7,7 @@ import Form from "../styles/Form";
 
 import { Link, useNavigate } from "react-router-dom";
 import LoginText from "./LoginText";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../ErrorMessage";
 
 let userData = {};
 
@@ -34,6 +34,10 @@ const Register = () => {
   const handleSubmitEvent = async (e) => {
     e.preventDefault();
     userData = registerData;
+
+    const formData = new FormData();
+    formData.append("userFormData", userData);
+    console.log();
 
     const res = await fetch("http://localhost:8000/register", {
       method: "POST",

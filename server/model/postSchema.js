@@ -6,22 +6,7 @@ const postSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  postData: [
-    {
-      title: {
-        type: String,
-      },
-      description: {
-        type: String,
-      },
-      createdDate: {
-        type: String,
-      },
-      currentTime: {
-        type: String,
-      },
-    },
-  ],
+  postData: [],
 });
 
 const UserPosts = mongoose.model("userPost", postSchema);

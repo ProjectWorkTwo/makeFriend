@@ -1,9 +1,11 @@
 const dotenv = require("dotenv");
 const express = require("express");
 const router = express.Router();
+const { ObjectId } = require("mongodb");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authenticate = require("../middleware/authenticate");
+const multer = require("multer");
 
 dotenv.config({ path: "./config.env" });
 require("../db/connection");
@@ -116,28 +118,22 @@ router.post("/createPost", async (req, res) => {
     const userNameExist = await User.findOne({ userName });
 
     try {
-
-      // This is mainly for profile based post showing
-      const userPostExist = await UserPosts.findOne({ userName });
-      userPostExist.postData = userPostExist.postData.concat({
-        title,
-        description,
-        createdDate,
-        currentTime,
-      });
-      const userPostUpload = await userPostExist.save();
-      
-      // Setting user post for home page showing 
-      await new UserSerialPost({
+      // Setting user post for home page showing
+      const newPost = await new UserSerialPost({
         fullName: userNameExist.fullName,
         userName,
         title,
         description,
         createdDate,
         currentTime,
-        likeNum: 0,
-        shareNum: 0,
+        likeNum: [],
+        shareNum: [],
       }).save();
+
+      // This is mainly for profile based post showing
+      const userPostExist = await UserPosts.findOne({ userName });
+      userPostExist.postData = userPostExist.postData.concat(newPost._id);
+      const userPostUpload = await userPostExist.save();
 
       if (userPostUpload) {
         res.status(201).json({ message: "Posted successfully" });
@@ -161,16 +157,46 @@ router.get("/getPost", async (req, res) => {
 
   try {
     allPostData = await UserSerialPost.find();
-    console.log("====================>>");
-    console.log(allPostData);
+    // console.log("====================>>");
+    // console.log(allPostData);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   }
   res.send(allPostData);
 });
 
-router.post('/likingPost', async (req, res)=>{
-  
-})
+// router.get('/likingPost', async(req, res)=>{
+//   const targetId = new ObjectId(req.query.postId);
+//   const currentPost = await UserSerialPost.findOne({_id: targetId});
+//   res.send({allLike: currentPost.likeList})
+// })
+router.post("/likingPost", async (req, res) => {
+  const { addOrRemove, postId, userName, fullName } = req.body;
+  console.log(addOrRemove, postId, userName, fullName);
+  try {
+    // To generate Object id and must be require from 'mongodb'
+    const targetId = new ObjectId(postId);
+    console.log("1===========");
+    console.log(targetId);
+    const likedPost = await UserSerialPost.findOne({ _id: targetId });
+    console.log(likedPost);
+    if (addOrRemove) {
+      console.log("before ==" + likedPost);
+      likedPost.likeList = Array.from(
+        new Set(likedPost.likeList.concat([userName, fullName]))
+      );
+      console.log("after ==" + likedPost);
+      likedPost.save();
+      console.log("matched");
+    } else {
+      console.log("matched!!!");
+    }
+    console.log(likedPost);
+  } catch (err) {
+    console.log("Not matched");
+    // res.status(500).json({ message: "Faild to like" });
+  }
+  res.send({ message: "finished" });
+});
 
 module.exports = router;

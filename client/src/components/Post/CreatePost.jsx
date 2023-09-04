@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { styled } from "styled-components";
 import ButtonStyle from "../styles/Button";
-import ErrorMessage from "../LoginRegister/ErrorMessage";
+import ErrorMessage from "../ErrorMessage";
 import SuccessMessage from "../SuccessMessage";
 
 import { FaXmark } from "react-icons/fa6";
@@ -24,7 +24,7 @@ const monthNames = [
   "Dec",
 ];
 
-const CreatePost = ({ useShowCreatePost }) => {
+const CreatePost = ({ useShowCreatePost, realTimeFetchPostData, autoHideCreatePost}) => {
   const navigate = useNavigate();
   const [createPostData, setCreatePostData] = useState({
     title: "",
@@ -87,10 +87,16 @@ const CreatePost = ({ useShowCreatePost }) => {
     if (res.status === 201) {
       setSuccessFeedBack((prev) => true);
       setServerErrorFeedBack((prev) => false);
+      realTimeFetchPostData();
+
+      setTimeout(()=>{
+        autoHideCreatePost();
+      }, 1000);
     } else {
       setSuccessFeedBack((prev) => false);
       setServerErrorFeedBack((prev) => true);
     }
+
   };
   return (
     <CreatePostSyle>
@@ -123,7 +129,6 @@ const CreatePost = ({ useShowCreatePost }) => {
 
           {postError && <ErrorMessage message={"Post can't be empty"} />}
 
-          {/* {postFeedBack? <SuccessMessage message={'Posted Successfully'}/> : <ErrorMessage message={'Server Error'} />} */}
           {serverErrorFeedBack && <ErrorMessage message={"Server Error"} />}
           {successFeedBack && (
             <SuccessMessage message={"Posted Successfully"} />
