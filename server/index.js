@@ -12,7 +12,8 @@ require('./db/connection')
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
+// app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
+app.use(cors())
 app.use(allRouter);
 const User = require('./model/userSchema');
 

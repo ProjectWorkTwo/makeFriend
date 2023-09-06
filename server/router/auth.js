@@ -6,6 +6,8 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const authenticate = require("../middleware/authenticate");
 const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 
 dotenv.config({ path: "./config.env" });
 require("../db/connection");
@@ -38,7 +40,7 @@ router.post("/register", async (req, res) => {
         .status(422)
         .json({ message: "user exist", userNameExist: true });
     } else {
-      const emailExist = await User.findOneAndRemove({ email: email });
+      const emailExist = await User.findOneAndRemove({ email });
       if (emailExist) {
         return res
           .status(422)
@@ -111,29 +113,57 @@ router.get("/", authenticate, (req, res) => {
   res.send(req.rootUser);
 });
 
-router.post("/createPost", async (req, res) => {
-  const { userName, title, description, createdDate, currentTime } = req.body;
-  // console.log(req.body);
-  try {
-    const userNameExist = await User.findOne({ userName });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    const originalname = file.originalname;
+    console.log(originalname);
+    const fileExtension = path.extname(originalname);
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const sanitizedFilename = originalname.replace(/\s+/g, '_');
+    const fileName = sanitizedFilename.substring(0, sanitizedFilename.lastIndexOf('.')) + '-' + uniqueSuffix + fileExtension;
+    
+    cb(null, fileName);
+  },
+});
+router.use("/uploads", express.static("uploads"));
+const upload = multer({ storage: storage });
 
-    try {
-      // Setting user post for home page showing
+router.post("/createPost", upload.single("postImg"), async (req, res) => {
+  const {userName, title, description, createdDate, currentTime} = req.body;
+  let fullName;
+  console.log("currentTime == "+currentTime);
+  const postImg = req.file.filename;
+
+  try{
+    const authorData = await User.findOne({userName});
+    fullName = authorData.fullName;
+    console.log('fullName' + fullName);
+
+    let authorsPost;
+    try{
+      authorsPost = await UserPosts.findOne({userName});
+    }catch(err){
+      console.log(err);
+      authorsPost = await new UserPosts({userName});
+    }
+
+    try{
       const newPost = await new UserSerialPost({
-        fullName: userNameExist.fullName,
+        // _id: new ObjectId(),
+        fullName,
         userName,
         title,
         description,
         createdDate,
         currentTime,
-        likeNum: [],
-        shareNum: [],
+        postImg,
       }).save();
-
-      // This is mainly for profile based post showing
-      const userPostExist = await UserPosts.findOne({ userName });
-      userPostExist.postData = userPostExist.postData.concat(newPost._id);
-      const userPostUpload = await userPostExist.save();
+  
+      const userPostUpload = authorsPost.postData = authorsPost.postData.concat(newPost._id);
+      authorsPost.save();
 
       if (userPostUpload) {
         res.status(201).json({ message: "Posted successfully" });
@@ -142,23 +172,19 @@ router.post("/createPost", async (req, res) => {
         res.status(500).json({ error: "Faild to post" });
         res.end();
       }
-    } catch (error) {
-      // console.log("==============");
-      const userPostExist = await new UserPosts({ userName }).save();
-      // console.log(error);
+    }catch(err){
+      console.log(err); 
     }
-  } catch (err) {
-    // console.log(err);
+  }catch(err){
+    console.log('Error to creating new post ============');
+    console.log(err);
   }
 });
-
 router.get("/getPost", async (req, res) => {
   let allPostData = [];
 
   try {
     allPostData = await UserSerialPost.find();
-    // console.log("====================>>");
-    // console.log(allPostData);
   } catch (err) {
     // console.log(err);
   }
@@ -172,28 +198,28 @@ router.get("/getPost", async (req, res) => {
 // })
 router.post("/likingPost", async (req, res) => {
   const { addOrRemove, postId, userName, fullName } = req.body;
-  console.log(addOrRemove, postId, userName, fullName);
+  // console.log(addOrRemove, postId, userName, fullName);
   try {
     // To generate Object id and must be require from 'mongodb'
     const targetId = new ObjectId(postId);
     console.log("1===========");
-    console.log(targetId);
+    // console.log(targetId);
     const likedPost = await UserSerialPost.findOne({ _id: targetId });
-    console.log(likedPost);
+    // console.log(likedPost);
     if (addOrRemove) {
-      console.log("before ==" + likedPost);
+      // console.log("before ==" + likedPost);
       likedPost.likeList = Array.from(
-        new Set(likedPost.likeList.concat([userName, fullName]))
+        new Set(likedPost.likeList.concat({ userName, fullName }))
       );
-      console.log("after ==" + likedPost);
+      // console.log("after ==" + likedPost);
       likedPost.save();
-      console.log("matched");
+      // console.log("matched");
     } else {
-      console.log("matched!!!");
+      // console.log("matched!!!");
     }
-    console.log(likedPost);
+    // console.log(likedPost);
   } catch (err) {
-    console.log("Not matched");
+    // console.log("Not matched");
     // res.status(500).json({ message: "Faild to like" });
   }
   res.send({ message: "finished" });

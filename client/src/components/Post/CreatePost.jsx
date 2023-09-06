@@ -6,8 +6,8 @@ import ErrorMessage from "../ErrorMessage";
 import SuccessMessage from "../SuccessMessage";
 
 import { FaXmark } from "react-icons/fa6";
-
-const date = new Date();
+import { BsImage } from "react-icons/bs";
+import UploadImgLabel from "../styles/UploadImgLabel";
 
 const monthNames = [
   "Jan",
@@ -24,27 +24,26 @@ const monthNames = [
   "Dec",
 ];
 
-const CreatePost = ({ useShowCreatePost, realTimeFetchPostData, autoHideCreatePost}) => {
+const CreatePost = ({
+  useShowCreatePost,
+  realTimeFetchPostData,
+  autoHideCreatePost,
+}) => {
   const navigate = useNavigate();
   const [createPostData, setCreatePostData] = useState({
+    userName: JSON.parse(localStorage.getItem("userLoginData")).userName,
     title: "",
     description: "",
-    createdDate: "",
-    currentTime: "",
+    postImg: "",
   });
   const [successFeedBack, setSuccessFeedBack] = useState(false);
   const [serverErrorFeedBack, setServerErrorFeedBack] = useState(false);
 
   const [postError, setPostError] = useState(false);
   const handleCreatePost = (e) => {
-    const currentDate = `${date.getDate()} ${
-      monthNames[date.getMonth()]
-    } ${date.getFullYear()}`;
     setCreatePostData((prev) => ({
       ...createPostData,
       [e.target.name]: e.target.value,
-      createdDate: currentDate,
-      currentTime: date.getTime() + "",
     }));
 
     setSuccessFeedBack((prev) => false);
@@ -52,9 +51,22 @@ const CreatePost = ({ useShowCreatePost, realTimeFetchPostData, autoHideCreatePo
     setPostError((prev) => false);
   };
 
+  const handleImgUpload = (e) => {
+    setCreatePostData((prev) => ({
+      ...createPostData,
+      postImg: e.target.files[0] || "",
+    }));
+  };
+  const getCurrentDate = () => {
+    const date = new Date();
+    return `${date.getDate()} ${
+      monthNames[date.getMonth()]
+    } ${date.getFullYear()}`;
+  };
   const createPostSubmission = async (e) => {
     e.preventDefault();
-    if(!localStorage.getItem('userLoginData')){
+
+    if (!localStorage.getItem("userLoginData")) {
       navigate("/login", { replace: true });
       return;
     }
@@ -65,49 +77,57 @@ const CreatePost = ({ useShowCreatePost, realTimeFetchPostData, autoHideCreatePo
     } else {
       setPostError((prev) => false);
     }
-    const loginData = JSON.parse(
-      localStorage.getItem("userLoginData")
-    ).userName;
-    console.log(loginData);
+    const date = new Date();
+
+    const postData = {
+      ...createPostData,
+    };
+
+    // setCreatePostData((prev) => postData);
+
+    console.log(createPostData);
+    const formData = new FormData();
+    for (let key in postData) {
+      if(key === "postImg" && !(createPostData[key])){
+        formData.append(key, "https://placehold.co/600x400");
+      }else{
+        formData.append(key, createPostData[key]);
+      }
+    }
+    formData.append('createdDate', getCurrentDate());
+    formData.append('currentTime', ""+date.getTime());
+
     const res = await fetch("http://localhost:8000/createPost", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        ...createPostData,
-        userName: loginData,
-      }),
+      body: formData,
     });
     const data = await res.json();
-    console.log(data);
-    console.log(res);
 
-    console.log(res.status);
-    if (res.status === 201) {
+    if (res.status === 201 || res.status === 200) {
       setSuccessFeedBack((prev) => true);
       setServerErrorFeedBack((prev) => false);
       realTimeFetchPostData();
 
-      setTimeout(()=>{
+      setTimeout(() => {
         autoHideCreatePost();
-      }, 1000);
+      }, 500);
     } else {
       setSuccessFeedBack((prev) => false);
       setServerErrorFeedBack((prev) => true);
     }
-
   };
   return (
     <CreatePostSyle>
       <div className="wrapper">
-        <FaXmark
-          onClick={() => {
-            useShowCreatePost((prev) => !prev);
-          }}
-        />
+        <div className="closeIcon">
+          <FaXmark
+            onClick={() => {
+              useShowCreatePost((prev) => !prev);
+            }}
+          />
+        </div>
         <h1>Create Post</h1>
-        <form onSubmit={createPostSubmission}>
+        <form onSubmit={createPostSubmission} encType="multipart/form-data">
           <input
             type="text"
             name="title"
@@ -116,6 +136,17 @@ const CreatePost = ({ useShowCreatePost, realTimeFetchPostData, autoHideCreatePo
             onChange={handleCreatePost}
             placeholder="Post title"
             required
+          />
+          <UploadImgLabel htmlFor="postImg" className="imgUploadBtn">
+            <span>Upload Image</span>
+            <BsImage />
+          </UploadImgLabel>
+          <input
+            type="file"
+            accept="image/*"
+            id="postImg"
+            onChange={handleImgUpload}
+            hidden
           />
           <textarea
             name="description"
@@ -153,7 +184,6 @@ const CreatePostSyle = styled.div`
   display: grid;
   place-items: center;
 
-  
   .wrapper {
     position: relative;
     background: #fff;
@@ -161,21 +191,35 @@ const CreatePostSyle = styled.div`
     max-width: 500px;
     border-radius: 8px;
     box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
-    rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
-    rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+      rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
+      rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     padding: 20px;
     text-align: center;
-    
-    & > svg {
+
+    .closeIcon {
       position: absolute;
       right: 20px;
       top: 20px;
-      width: 25px;
-      height: 25px;
-      color: var(--primaryColor);
-      cursor: pointer;
+      background: rgba(0, 0, 0, 0);
+      display: grid;
+      place-items: center;
+      height: 35px;
+      width: 35px;
+      border-radius: 50%;
+      transition: 0.15s ease-in-out;
+
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
+
+      svg {
+        width: 25px;
+        height: 25px;
+        color: var(--primaryColor);
+        cursor: pointer;
+      }
     }
-    
+
     h1 {
       padding-bottom: 15px;
       color: var(--primaryColor);
@@ -186,7 +230,11 @@ const CreatePostSyle = styled.div`
       display: flex;
       gap: 20px;
       flex-direction: column;
-      
+
+      .imgUploadBtn {
+        width: 100%;
+      }
+
       input,
       textarea {
         border: 2px solid var(--primaryColor);

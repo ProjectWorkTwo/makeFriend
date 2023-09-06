@@ -5,6 +5,7 @@ import { BsFillHeartFill } from "react-icons/bs";
 import { FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import ShareAndLikeList from "./ShareAndLikeList";
+import DOMPurify from "dompurify";
 
 const Post = ({ postData }) => {
   const {
@@ -16,31 +17,25 @@ const Post = ({ postData }) => {
     likeList,
     shareList,
     _id: postId,
+    postImg,
   } = postData;
   const accountAuthorUserName = JSON.parse(
     localStorage.getItem("userLoginData")
   );
-  // console.log(likeList);
-  // console.log(accountAuthorUserName.userName);
-  // const addOrRemove = true;
-  // const [allLikeList, setAllLikeList] = useState(likeList);
-  // const [liked, setLiked] = useState(
-  //   Boolean(
-  //     allLikeList.find(
-  //       (item) => item.userName === accountAuthorUserName.userName
-  //     )
-  //   )
-  // );
 
+  const formateDescription = (description) => {
+    return description
+      .replaceAll("\n", "<br/>")
+      .replace("\t", "&nbsp;&nbsp;&nbsp;");
+  };
+
+  const descriptionShort =
+    description.length > 150 ? description.slice(0, 151) + "...." : description;
+
+  const [liked, setLiked] = useState(false);
+  const [toogleText, setToggleText] = useState(false);
   const [showHideLike, setShowHideLike] = useState(false);
   const [showHideShare, setShowHideShare] = useState(false);
-
-  const updateLike = async () => {
-    setAllLikeList(likeList);
-  };
-  // useEffect(() => {
-  //   updateLike();
-  // });
 
   const handleShowHideLike = () => {
     setShowHideLike((prev) => true);
@@ -56,6 +51,18 @@ const Post = ({ postData }) => {
     setShowHideShare(false);
   };
 
+  const handleToggleText = () => {
+    setToggleText((prev) => !prev);
+  };
+
+  const resetDescription = () => {
+    return description.length > 20
+      ? toogleText
+        ? formateDescription(description)
+        : formateDescription(descriptionShort)
+      : formateDescription(description);
+  };
+
   const likeHandle = async () => {
     // const res = await fetch("http://localhost:8000/likingPost", {
     //   method: "POST",
@@ -69,14 +76,13 @@ const Post = ({ postData }) => {
     //     postId
     //   }),
     // });
-
     // let data = await res.json();
   };
   return (
     <PostStyle>
       {showHideLike && (
         <ShareAndLikeList
-          reacterList={allLikeList}
+          reacterList={likeList}
           closeShareAndLikePopUp={closeShareAndLikePopUp}
         />
       )}
@@ -105,7 +111,31 @@ const Post = ({ postData }) => {
         <div className="center">
           <h3>{title}</h3>
           <hr />
-          <p>{description}</p>
+          <article>
+            {postImg && (
+              <figure>
+                <img
+                  src={`http://localhost:8000/uploads/${postImg}`}
+                  alt={title}
+                />
+              </figure>
+            )}
+
+            <div className="content">
+              {/* dangerouslySetInnerHTML is like innerHTML in DOM */}
+              <p
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(resetDescription()),
+                }}
+              ></p>
+              {description !== descriptionShort && (
+                <span className="textToogle" onClick={handleToggleText}>
+                  {" "}
+                  {toogleText ? "See less" : "See More"}
+                </span>
+              )}
+            </div>
+          </article>
         </div>
         <div className="bottom">
           <div className="likeInfo">
@@ -161,6 +191,7 @@ const PostStyle = styled.div`
     align-items: center;
 
     .avatar {
+      flex-shrink: 0;
       width: 80px;
       height: 80px;
       border-radius: 50%;
@@ -178,7 +209,7 @@ const PostStyle = styled.div`
       gap: 2px;
 
       h4 {
-        font-size: 22px;
+        font-size: 20px;
         text-transform: capitalize;
         line-height: normal;
         a {
@@ -215,9 +246,42 @@ const PostStyle = styled.div`
       background: var(--primaryColor500);
       margin: 15px 0;
     }
+    article {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+
+      figure {
+        width: 100%;
+        border-radius: 8px;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
     p {
       font-size: 16px;
       color: var(--lightText);
+      line-height: 1.5;
+
+      span.textToogle {
+        color: var(--primaryColor);
+        font-weight: 900;
+        text-transform: capitalize;
+        cursor: pointer;
+        margin-left: 10px;
+        user-select: none;
+        transition: 0.2s ease;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
     }
   }
 

@@ -37,7 +37,7 @@ const Register = () => {
 
     const formData = new FormData();
     formData.append("userFormData", userData);
-    console.log();
+    // console.log();
 
     const res = await fetch("http://localhost:8000/register", {
       method: "POST",

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const ButtonStyle = styled.button`
+const UploadImgLabel = styled.label`
   width: 100%;
   padding: 12px 20px;
   background: var(--primaryColor);
@@ -10,9 +10,12 @@ const ButtonStyle = styled.button`
   letter-spacing: 1.4px;
   cursor: pointer;
   border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   transition: 0.3s ease;
-  
-  svg{
+
+  svg {
     font-size: 25px;
   }
 
@@ -20,5 +23,4 @@ const ButtonStyle = styled.button`
     background: var(--primaryColor500);
   }
 `;
-
-export default ButtonStyle;
+export default UploadImgLabel;
