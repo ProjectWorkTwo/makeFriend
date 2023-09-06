@@ -52,6 +52,7 @@ const CreatePost = ({
   };
 
   const handleImgUpload = (e) => {
+    console.log(e.target.file);
     setCreatePostData((prev) => ({
       ...createPostData,
       postImg: e.target.files[0] || "",
@@ -88,14 +89,11 @@ const CreatePost = ({
     console.log(createPostData);
     const formData = new FormData();
     for (let key in postData) {
-      if(key === "postImg" && !(createPostData[key])){
-        formData.append(key, "https://placehold.co/600x400");
-      }else{
-        formData.append(key, createPostData[key]);
-      }
+      formData.append(key, createPostData[key]);
     }
-    formData.append('createdDate', getCurrentDate());
-    formData.append('currentTime', ""+date.getTime());
+    console.log(formData);
+    formData.append("createdDate", getCurrentDate());
+    formData.append("currentTime", "" + date.getTime());
 
     const res = await fetch("http://localhost:8000/createPost", {
       method: "POST",

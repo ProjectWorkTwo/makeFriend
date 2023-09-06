@@ -30,7 +30,7 @@ const Post = ({ postData }) => {
   };
 
   const descriptionShort =
-    description.length > 150 ? description.slice(0, 151) + "...." : description;
+    description.length > 150 ? description.slice(0, 151) : description;
 
   const [liked, setLiked] = useState(false);
   const [toogleText, setToggleText] = useState(false);
@@ -131,7 +131,7 @@ const Post = ({ postData }) => {
               {description !== descriptionShort && (
                 <span className="textToogle" onClick={handleToggleText}>
                   {" "}
-                  {toogleText ? "See less" : "See More"}
+                  {toogleText ? "...See less" : "...See More"}
                 </span>
               )}
             </div>
@@ -263,23 +263,26 @@ const PostStyle = styled.div`
           object-fit: cover;
         }
       }
-    }
-    p {
-      font-size: 16px;
-      color: var(--lightText);
-      line-height: 1.5;
+      .content {
+        p {
+          font-size: 16px;
+          color: var(--lightText);
+          line-height: 1.5;
+          display: inline;
+        }
+        span.textToogle {
+          color: var(--primaryColor);
+          font-weight: 500;
+          text-transform: capitalize;
+          cursor: pointer;
+          margin-left: 10px;
+          user-select: none;
+          display: inline;
+          transition: 0.2s ease;
 
-      span.textToogle {
-        color: var(--primaryColor);
-        font-weight: 900;
-        text-transform: capitalize;
-        cursor: pointer;
-        margin-left: 10px;
-        user-select: none;
-        transition: 0.2s ease;
-
-        &:hover {
-          text-decoration: underline;
+          &:hover {
+            text-decoration: underline;
+          }
         }
       }
     }

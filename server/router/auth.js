@@ -131,11 +131,70 @@ const storage = multer.diskStorage({
 router.use("/uploads", express.static("uploads"));
 const upload = multer({ storage: storage });
 
+const imageUpladForCreatePost = ()=>{
+  
+}
+
+// router.post("/createPost", upload.single("postImg"), async (req, res) => {
+//   const {userName, title, description, createdDate, currentTime} = req.body;
+//   let fullName;
+//   console.log("currentTime == "+currentTime);
+//   const postImg = req.file.filename;
+
+//   try{
+//     const authorData = await User.findOne({userName});
+//     fullName = authorData.fullName;
+//     console.log('fullName' + fullName);
+
+//     let authorsPost;
+//     try{
+//       authorsPost = await UserPosts.findOne({userName});
+//     }catch(err){
+//       console.log(err);
+//       authorsPost = await new UserPosts({userName});
+//     }
+
+//     try{
+//       const newPost = await new UserSerialPost({
+//         // _id: new ObjectId(),
+//         fullName,
+//         userName,
+//         title,
+//         description,
+//         createdDate,
+//         currentTime,
+//         postImg,
+//       }).save();
+  
+//       const userPostUpload = authorsPost.postData = authorsPost.postData.concat(newPost._id);
+//       authorsPost.save();
+
+//       if (userPostUpload) {
+//         res.status(201).json({ message: "Posted successfully" });
+//         res.end();
+//       } else {
+//         res.status(500).json({ error: "Faild to post" });
+//         res.end();
+//       }
+//     }catch(err){
+//       console.log(err); 
+//     }
+//   }catch(err){
+//     console.log('Error to creating new post ============');
+//     console.log(err);
+//   }
+// });
+
 router.post("/createPost", upload.single("postImg"), async (req, res) => {
   const {userName, title, description, createdDate, currentTime} = req.body;
   let fullName;
   console.log("currentTime == "+currentTime);
-  const postImg = req.file.filename;
+  let postImg;
+  if(req.file){
+    postImg = req.file.filename;
+  }else{
+    postImg = undefined;
+  }
 
   try{
     const authorData = await User.findOne({userName});
