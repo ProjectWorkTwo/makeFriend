@@ -14,6 +14,7 @@ require("../db/connection");
 const User = require("../model/userSchema");
 const UserPosts = require("../model/postSchema");
 const UserSerialPost = require("../model/serialPostSchema");
+const PostLikeShareList = require("../model/LikeListAndShareList");
 
 router.get("/", (req, res) => {
   res.send("<h1>Hello world from server</h1>");
@@ -119,99 +120,57 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, cb) {
     const originalname = file.originalname;
-    console.log(originalname);
     const fileExtension = path.extname(originalname);
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    const sanitizedFilename = originalname.replace(/\s+/g, '_');
-    const fileName = sanitizedFilename.substring(0, sanitizedFilename.lastIndexOf('.')) + '-' + uniqueSuffix + fileExtension;
-    
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    const sanitizedFilename = originalname.replace(/\s+/g, "_");
+    const fileName =
+      sanitizedFilename.substring(0, sanitizedFilename.lastIndexOf(".")) +
+      "-" +
+      uniqueSuffix +
+      fileExtension;
+
     cb(null, fileName);
   },
 });
 router.use("/uploads", express.static("uploads"));
 const upload = multer({ storage: storage });
 
-const imageUpladForCreatePost = ()=>{
-  
-}
-
-// router.post("/createPost", upload.single("postImg"), async (req, res) => {
-//   const {userName, title, description, createdDate, currentTime} = req.body;
-//   let fullName;
-//   console.log("currentTime == "+currentTime);
-//   const postImg = req.file.filename;
-
-//   try{
-//     const authorData = await User.findOne({userName});
-//     fullName = authorData.fullName;
-//     console.log('fullName' + fullName);
-
-//     let authorsPost;
-//     try{
-//       authorsPost = await UserPosts.findOne({userName});
-//     }catch(err){
-//       console.log(err);
-//       authorsPost = await new UserPosts({userName});
-//     }
-
-//     try{
-//       const newPost = await new UserSerialPost({
-//         // _id: new ObjectId(),
-//         fullName,
-//         userName,
-//         title,
-//         description,
-//         createdDate,
-//         currentTime,
-//         postImg,
-//       }).save();
-  
-//       const userPostUpload = authorsPost.postData = authorsPost.postData.concat(newPost._id);
-//       authorsPost.save();
-
-//       if (userPostUpload) {
-//         res.status(201).json({ message: "Posted successfully" });
-//         res.end();
-//       } else {
-//         res.status(500).json({ error: "Faild to post" });
-//         res.end();
-//       }
-//     }catch(err){
-//       console.log(err); 
-//     }
-//   }catch(err){
-//     console.log('Error to creating new post ============');
-//     console.log(err);
-//   }
-// });
-
 router.post("/createPost", upload.single("postImg"), async (req, res) => {
-  const {userName, title, description, createdDate, currentTime} = req.body;
+  const { userName, title, description, createdDate, currentTime } = req.body;
   let fullName;
-  console.log("currentTime == "+currentTime);
+
   let postImg;
-  if(req.file){
+  if (req.file) {
     postImg = req.file.filename;
-  }else{
+  } else {
     postImg = undefined;
   }
 
-  try{
-    const authorData = await User.findOne({userName});
+  try {
+    const authorData = await User.findOne({ userName });
     fullName = authorData.fullName;
-    console.log('fullName' + fullName);
 
     let authorsPost;
-    try{
-      authorsPost = await UserPosts.findOne({userName});
-    }catch(err){
-      console.log(err);
-      authorsPost = await new UserPosts({userName});
+    try {
+      authorsPost = await UserPosts.findOne({ userName });
+    } catch (err) {
+      // console.log(err);
+      authorsPost = await new UserPosts({ userName });
     }
 
-    try{
+    let newPostLikeShareList;
+    try {
+      newPostLikeShareList = await new PostLikeShareList({
+        likeList: [],
+        shareList: [],
+      }).save();
+    } catch (err) {
+      // console.log(err);
+    }
+
+    try {
       const newPost = await new UserSerialPost({
-        // _id: new ObjectId(),
+        _id: new ObjectId(),
         fullName,
         userName,
         title,
@@ -219,9 +178,11 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
         createdDate,
         currentTime,
         postImg,
+        postLikeShareList: newPostLikeShareList._id,
       }).save();
-  
-      const userPostUpload = authorsPost.postData = authorsPost.postData.concat(newPost._id);
+
+      const userPostUpload = (authorsPost.postData =
+        authorsPost.postData.concat(newPost._id));
       authorsPost.save();
 
       if (userPostUpload) {
@@ -231,12 +192,11 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
         res.status(500).json({ error: "Faild to post" });
         res.end();
       }
-    }catch(err){
-      console.log(err); 
+    } catch (err) {
+      // console.log(err);
     }
-  }catch(err){
-    console.log('Error to creating new post ============');
-    console.log(err);
+  } catch (err) {
+    // console.log(err);
   }
 });
 router.get("/getPost", async (req, res) => {
@@ -248,6 +208,20 @@ router.get("/getPost", async (req, res) => {
     // console.log(err);
   }
   res.send(allPostData);
+});
+router.post("/getLikeShareList", async (req, res) => {
+  const { postLikeShareList } = req.body;
+  try {
+    const currentLikeListAndShareList = await PostLikeShareList.findOne({
+      _id: new ObjectId(postLikeShareList),
+    });
+    const { likeList, shareList } = currentLikeListAndShareList;
+    console.log(currentLikeListAndShareList);
+    // res.json(likeList, shareList);
+    res.status(201).json({likeList, shareList});
+  } catch (err) {
+    res.status(500).json({ message: "server error" });
+  }
 });
 
 // router.get('/likingPost', async(req, res)=>{

@@ -14,8 +14,7 @@ const Post = ({ postData }) => {
     title,
     createdDate,
     description,
-    likeList,
-    shareList,
+    postLikeShareList,
     _id: postId,
     postImg,
   } = postData;
@@ -33,9 +32,32 @@ const Post = ({ postData }) => {
     description.length > 150 ? description.slice(0, 151) : description;
 
   const [liked, setLiked] = useState(false);
+  const [totalLikeList, setTotalLikeList] = useState([]);
+  const [totalShareList, setTotalShareList] = useState([]);
   const [toogleText, setToggleText] = useState(false);
   const [showHideLike, setShowHideLike] = useState(false);
   const [showHideShare, setShowHideShare] = useState(false);
+
+  const PostLikeShareList = async () => {
+    const res = await fetch("http://localhost:8000/getLikeShareList", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        postLikeShareList,
+      }),
+    });
+    const {likeList, shareList} = await res.json();
+    console.log(likeList, shareList);
+    
+    setTotalLikeList(prev => likeList);
+    setTotalShareList(prev => shareList);
+  };
+
+  useEffect(() => {
+    PostLikeShareList();
+  }, []);
 
   const handleShowHideLike = () => {
     setShowHideLike((prev) => true);
@@ -140,9 +162,9 @@ const Post = ({ postData }) => {
         <div className="bottom">
           <div className="likeInfo">
             <span onClick={handleShowHideLike}>
-              {likeList.length >= 1000
-                ? `${Number((likeList.length / 1000).toFixed(1))} k `
-                : likeList.length + " "}
+              {totalLikeList.length >= 1000
+                ? `${Number((totalLikeList.length / 1000).toFixed(1))} k `
+                : totalLikeList.length + " "}
               Likes
             </span>
             <button
@@ -154,9 +176,9 @@ const Post = ({ postData }) => {
           </div>
           <div className="shareInfo">
             <span onClick={handleShowHideShare}>
-              {shareList.length >= 1000
-                ? `${Number((shareList.length / 1000).toFixed(1))} k `
-                : shareList.length + " "}{" "}
+              {totalShareList.length >= 1000
+                ? `${Number((totalShareList.length / 1000).toFixed(1))} k `
+                : totalShareList.length + " "}{" "}
               Shares
             </span>
             <button className="share">

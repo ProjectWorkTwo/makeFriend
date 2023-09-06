@@ -35,34 +35,10 @@ const serialPostSchema = new mongoose.Schema({
     type: String,
     unique: false,
   },
-  likeList: [
-    {
-      likedUserName: {
-        type: String,
-        unique: true,
-        required: false
-      },
-      fullName: {
-        type: String,
-        unique: true,
-        required: false
-      },
-    },
-  ],
-  shareList: [
-    {
-      useredUserName: {
-        type: String,
-        unique: true,
-        required: false
-      },
-      fullName: {
-        type: String,
-        unique: true,
-        required: false
-      },
-    },
-  ],
+  postLikeShareList: {
+    type: Object,
+    unique: true
+  }
 });
 
 const UserSerialPost = mongoose.model("userSerialPost", serialPostSchema);
