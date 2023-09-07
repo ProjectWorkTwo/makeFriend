@@ -5,19 +5,14 @@ import profileImg from "../../assets/avatar/avatar1.png";
 import { Link } from "react-router-dom";
 
 const ShareAndLikeList = ({ reacterList, closeShareAndLikePopUp }) => {
-  const closePopUp = ()=>{
-    closeShareAndLikePopUp();
-  }
-  console.log(reacterList.length);
   return (
     <ShareAndLikeListStyle>
       <div className="wrapper">
-        <FaXmark onClick={closePopUp} />
+        <FaXmark onClick={() => closeShareAndLikePopUp()} />
         <h4>Who liked your post:</h4>
         <div className="reactedList">
           <ul>
             {reacterList.map((reacter) => {
-              console.log('=======================');
               const { profilePic, userName, fullName } = reacter;
               console.log(userName, fullName);
               <li key={userName}>

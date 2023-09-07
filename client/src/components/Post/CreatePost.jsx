@@ -8,6 +8,7 @@ import SuccessMessage from "../SuccessMessage";
 import { FaXmark } from "react-icons/fa6";
 import { BsImage } from "react-icons/bs";
 import UploadImgLabel from "../styles/UploadImgLabel";
+import CloseIcon from "../styles/CloseIcon";
 
 const monthNames = [
   "Jan",
@@ -117,13 +118,18 @@ const CreatePost = ({
   return (
     <CreatePostSyle>
       <div className="wrapper">
-        <div className="closeIcon">
+        {/* <div className="closeIcon">
           <FaXmark
-            onClick={() => {
-              useShowCreatePost((prev) => !prev);
-            }}
+            
           />
-        </div>
+        </div> */}
+        <CloseIcon
+          onClick={() => {
+            useShowCreatePost((prev) => !prev);
+          }}
+        >
+          <FaXmark />
+        </CloseIcon>
         <h1>Create Post</h1>
         <form onSubmit={createPostSubmission} encType="multipart/form-data">
           <input
@@ -194,7 +200,7 @@ const CreatePostSyle = styled.div`
     padding: 20px;
     text-align: center;
 
-    .closeIcon {
+    /* .closeIcon {
       position: absolute;
       right: 20px;
       top: 20px;
@@ -216,7 +222,7 @@ const CreatePostSyle = styled.div`
         color: var(--primaryColor);
         cursor: pointer;
       }
-    }
+    } */
 
     h1 {
       padding-bottom: 15px;

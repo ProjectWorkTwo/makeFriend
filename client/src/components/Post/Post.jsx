@@ -6,6 +6,7 @@ import { FaShare } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import ShareAndLikeList from "./ShareAndLikeList";
 import DOMPurify from "dompurify";
+import PostImagePreview from "./PostImagePreview";
 
 const Post = ({ postData }) => {
   const {
@@ -37,6 +38,7 @@ const Post = ({ postData }) => {
   const [toogleText, setToggleText] = useState(false);
   const [showHideLike, setShowHideLike] = useState(false);
   const [showHideShare, setShowHideShare] = useState(false);
+  const [showHideImgPreview, setShowHideImgPreview] = useState(false);
 
   const PostLikeShareList = async () => {
     const res = await fetch("http://localhost:8000/getLikeShareList", {
@@ -48,11 +50,11 @@ const Post = ({ postData }) => {
         postLikeShareList,
       }),
     });
-    const {likeList, shareList} = await res.json();
+    const { likeList, shareList } = await res.json();
     console.log(likeList, shareList);
-    
-    setTotalLikeList(prev => likeList);
-    setTotalShareList(prev => shareList);
+
+    setTotalLikeList((prev) => likeList);
+    setTotalShareList((prev) => shareList);
   };
 
   useEffect(() => {
@@ -71,6 +73,13 @@ const Post = ({ postData }) => {
   const closeShareAndLikePopUp = () => {
     setShowHideLike(false);
     setShowHideShare(false);
+  };
+  const closeImgPreview = () => {
+    setShowHideImgPreview(false);
+  };
+
+  const showHideImagePreviewHandle = () => {
+    setShowHideImgPreview((prev) => !prev);
   };
 
   const handleToggleText = () => {
@@ -104,14 +113,22 @@ const Post = ({ postData }) => {
     <PostStyle>
       {showHideLike && (
         <ShareAndLikeList
-          reacterList={likeList}
+          reacterList={totalLikeList}
           closeShareAndLikePopUp={closeShareAndLikePopUp}
         />
       )}
       {showHideShare && (
         <ShareAndLikeList
-          reacterList={shareList}
+          reacterList={totalShareList}
           closeShareAndLikePopUp={closeShareAndLikePopUp}
+        />
+      )}
+
+      {showHideImgPreview && (
+        <PostImagePreview
+          imgLink={`http://localhost:8000/uploads/${postImg}`}
+          imgTitle={title}
+          closeImgPreview={closeImgPreview}
         />
       )}
 
@@ -135,7 +152,7 @@ const Post = ({ postData }) => {
           <hr />
           <article>
             {postImg && (
-              <figure>
+              <figure onClick={showHideImagePreviewHandle}>
                 <img
                   src={`http://localhost:8000/uploads/${postImg}`}
                   alt={title}
@@ -278,6 +295,7 @@ const PostStyle = styled.div`
         width: 100%;
         border-radius: 8px;
         overflow: hidden;
+        cursor: pointer;
 
         img {
           width: 100%;
