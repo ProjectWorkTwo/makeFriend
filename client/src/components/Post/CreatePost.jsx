@@ -10,20 +10,7 @@ import { BsImage } from "react-icons/bs";
 import UploadImgLabel from "../styles/UploadImgLabel";
 import CloseIcon from "../styles/CloseIcon";
 
-const monthNames = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "May",
-  "June",
-  "Jul",
-  "Aug",
-  "Sep",
-  "Oct",
-  "Nov",
-  "Dec",
-];
+import PropTypes from 'prop-types';
 
 const CreatePost = ({
   setShowCreatePost,
@@ -39,8 +26,22 @@ const CreatePost = ({
   });
   const [successFeedBack, setSuccessFeedBack] = useState(false);
   const [serverErrorFeedBack, setServerErrorFeedBack] = useState(false);
-
+  
   const [postError, setPostError] = useState(false);
+  const monthNames = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "June",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
   const handleCreatePost = (e) => {
     setCreatePostData((prev) => ({
       ...createPostData,
@@ -168,6 +169,13 @@ const CreatePost = ({
     </CreatePostSyle>
   );
 };
+
+
+CreatePost.propTypes = {
+  setShowCreatePost: PropTypes.func,
+  realTimeFetchPostData: PropTypes.func,
+  autoHideCreatePost: PropTypes.func,
+}
 
 export default CreatePost;
 

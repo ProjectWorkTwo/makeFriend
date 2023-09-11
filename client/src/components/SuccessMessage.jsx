@@ -2,12 +2,18 @@ import React from "react";
 import { FaCheck } from "react-icons/fa6";
 import styled from "styled-components";
 
+import PropTypes from "prop-types";
+
 const SuccessMessage = ({ message }) => {
   return (
     <SuccessMessageStyle>
       <FaCheck /> <span>{message}</span>
     </SuccessMessageStyle>
   );
+};
+
+SuccessMessage.propTypes = {
+  message: PropTypes.string,
 };
 
 export default SuccessMessage;

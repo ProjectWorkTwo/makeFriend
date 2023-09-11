@@ -3,6 +3,8 @@ import { styled } from "styled-components";
 import { FaXmark } from "react-icons/fa6";
 import CloseIcon2 from "../styles/CloseIcon2";
 
+import PropTypes from "prop-types";
+
 const PostImagePreview = ({ imgLink, imgTitle, closeImgPreview }) => {
   return (
     <ImgPreview>
@@ -12,6 +14,12 @@ const PostImagePreview = ({ imgLink, imgTitle, closeImgPreview }) => {
       <img src={imgLink} alt={imgTitle} />
     </ImgPreview>
   );
+};
+
+PostImagePreview.prototype = {
+  imgLink: PropTypes.string,
+  imgTitle: PropTypes.string,
+  closeImgPreview: PropTypes.func,
 };
 
 export default PostImagePreview;

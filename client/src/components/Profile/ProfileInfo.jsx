@@ -5,6 +5,9 @@ import profileDefaultCover from "../../assets/profileCover.jpg";
 import defaultAvatar from "../../assets/avatar/avatar1.png";
 import { FaCamera } from "react-icons/fa";
 import UpdateProfileForm from "./UpdateProfileForm";
+import ButtonStyle from "../styles/Button";
+
+import PropTypes, { string } from 'prop-types'
 
 const ProfileInfo = ({ userName }) => {
   const [profileInfo, setProfileInfo] = useState({
@@ -146,6 +149,7 @@ const ProfileInfo = ({ userName }) => {
               <li><span>Joined:</span> {findDate(profileInfo.joinDate)}</li>
             </ul>
             <p className="bio">{profileInfo.bio}</p>
+            <ButtonStyle>Edit Profile</ButtonStyle>
           </div>
         </div>
       </div>
@@ -155,6 +159,9 @@ const ProfileInfo = ({ userName }) => {
   );
 };
 
+ProfileInfo.propTypes = {
+  userName: PropTypes.string
+}
 export default ProfileInfo;
 
 const ProfileInfoWrapper = styled.div`

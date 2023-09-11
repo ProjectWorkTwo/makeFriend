@@ -8,6 +8,8 @@ import ShareAndLikeList from "./ShareAndLikeList";
 import DOMPurify from "dompurify";
 import PostImagePreview from "./PostImagePreview";
 
+import PropTypes from "prop-types";
+
 const Post = ({ postData }) => {
   const {
     fullName,
@@ -39,29 +41,41 @@ const Post = ({ postData }) => {
   const [showHideLike, setShowHideLike] = useState(false);
   const [showHideShare, setShowHideShare] = useState(false);
   const [showHideImgPreview, setShowHideImgPreview] = useState(false);
+  const [profilePic, setProfilePic] = useState("");
+
+  useEffect(() => {
+    const getProfilePic = async () => {
+      const res = await fetch(
+        `http://localhost:8000/getProfilePic/${userName}`
+      );
+
+      const { profilePic } = await res.json();
+
+      if (res.status !== 200) {
+        setProfilePic((prev) => avatar);
+      } else {
+        setProfilePic((prev) => `http://localhost:8000/uploads/${profilePic}`);
+      }
+    };
+    getProfilePic();
+  }, []);
 
   const PostLikeShareList = async () => {
     // const res = await fetch(`http://localhost:8000/getLikeShareList/${postId}`);
-
     // const data = await res.json();
-
     // const { likeList, shareList } = data;
     // console.log(likeList, shareList);
-
     // let isUserLikedPost = -1;
-
     // if (likeList.length) {
     //   isUserLikedPost = likeList.findIndex(
     //     (user) => user.userName === userName
     //   );
     // }
-
     // if (isUserLikedPost === -1) {
     //   setLiked((prev) => false);
     // } else {
     //   setLiked((prev) => true);
     // }
-
     // setTotalLikeList((prev) => likeList);
     // setTotalShareList((prev) => shareList);
   };
@@ -103,23 +117,23 @@ const Post = ({ postData }) => {
   const closeImgPreview = () => {
     setShowHideImgPreview(false);
   };
-  
+
   const showHideImagePreviewHandle = () => {
     setShowHideImgPreview((prev) => !prev);
   };
-  
+
   const handleToggleText = () => {
     setToggleText((prev) => !prev);
   };
-  
+
   const resetDescription = () => {
     return description.length > 20
-    ? toogleText
-    ? formateDescription(description)
-    : formateDescription(descriptionShort)
-    : formateDescription(description);
+      ? toogleText
+        ? formateDescription(description)
+        : formateDescription(descriptionShort)
+      : formateDescription(description);
   };
-  
+
   const UpdateLikeList = async () => {
     // console.log(totalLikeList);
     // const res = await fetch(`http://localhost:8000/getLikeShareList/${postId}`, {
@@ -177,7 +191,6 @@ const Post = ({ postData }) => {
     // if(totalLikeList.includes(userName))
   };
 
-
   const likeHandle = async () => {
     // const res = await fetch("http://localhost:8000/likingPost", {
     //   method: "POST",
@@ -219,7 +232,7 @@ const Post = ({ postData }) => {
       <div className="wrapper">
         <div className="top">
           <div className="avatar">
-            <img src={avatar} alt="" />
+            <img src={profilePic} alt="" />
           </div>
           <div className="info">
             <h4>
@@ -277,7 +290,7 @@ const Post = ({ postData }) => {
             <button
               className={`like ${liked ? "active" : ""}`}
               onClick={() => {
-                addOrRemoveLike()
+                addOrRemoveLike();
               }}
             >
               <BsFillHeartFill />
@@ -298,6 +311,17 @@ const Post = ({ postData }) => {
       </div>
     </PostStyle>
   );
+};
+
+Post.propTypes = {
+  fullName: PropTypes.string,
+  userName: PropTypes.string,
+  title: PropTypes.string,
+  createdDate: PropTypes.string,
+  description: PropTypes.string,
+  postLikeShareList: PropTypes.array,
+  _id: PropTypes.string,
+  postImg: PropTypes.string,
 };
 
 export default Post;

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import Post from "../Post/Post";
 import styled from "styled-components";
 
-const ProfilePosts = ({postsData}) => {
-  console.log(postsData);
+import PropTypes from "prop-types";
 
+const ProfilePosts = ({ postsData }) => {
   return (
     <ProfilePostsWrapper>
       <h1>Profile posts</h1>
@@ -18,6 +18,10 @@ const ProfilePosts = ({postsData}) => {
   );
 };
 
+ProfilePosts.propTypes = {
+  postsData: PropTypes.array,
+};
+
 export default ProfilePosts;
 
 const ProfilePostsWrapper = styled.div`
@@ -26,13 +30,13 @@ const ProfilePostsWrapper = styled.div`
   flex-direction: column;
   gap: 30px;
 
-  h1{
+  h1 {
     text-align: center;
   }
 
-  .postWrapper{
+  .postWrapper {
     display: flex;
     flex-direction: column;
     gap: 30px;
   }
-`
+`;
