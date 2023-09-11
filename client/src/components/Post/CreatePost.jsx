@@ -10,7 +10,7 @@ import { BsImage } from "react-icons/bs";
 import UploadImgLabel from "../styles/UploadImgLabel";
 import CloseIcon from "../styles/CloseIcon";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 const CreatePost = ({
   setShowCreatePost,
@@ -26,7 +26,7 @@ const CreatePost = ({
   });
   const [successFeedBack, setSuccessFeedBack] = useState(false);
   const [serverErrorFeedBack, setServerErrorFeedBack] = useState(false);
-  
+
   const [postError, setPostError] = useState(false);
   const monthNames = [
     "Jan",
@@ -54,7 +54,6 @@ const CreatePost = ({
   };
 
   const handleImgUpload = (e) => {
-    // console.log(e.target.files[0]);
     setCreatePostData((prev) => ({
       ...createPostData,
       postImg: e.target.files[0] || "",
@@ -86,14 +85,10 @@ const CreatePost = ({
       ...createPostData,
     };
 
-    // setCreatePostData((prev) => postData);
-
     const formData = new FormData();
     for (let key in postData) {
       formData.append(key, createPostData[key]);
     }
-    console.log('formData ============= ');
-    console.log(formData);
     formData.append("createdDate", getCurrentDate());
     formData.append("currentTime", "" + date.getTime());
 
@@ -170,12 +165,11 @@ const CreatePost = ({
   );
 };
 
-
 CreatePost.propTypes = {
   setShowCreatePost: PropTypes.func,
   realTimeFetchPostData: PropTypes.func,
   autoHideCreatePost: PropTypes.func,
-}
+};
 
 export default CreatePost;
 

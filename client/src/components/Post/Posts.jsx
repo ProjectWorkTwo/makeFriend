@@ -3,11 +3,15 @@ import Post from "./Post";
 import styled from "styled-components";
 import CreatePost from "./CreatePost";
 import ButtonStyle from "../styles/Button";
+import { useNavigate } from "react-router-dom";
 
 const Posts = () => {
+  const navigate = useNavigate();
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postsData, setPostsData] = useState([]);
   const [realTimePostFetch, setRealTimePostFetch] = useState(Math.random());
+
+  const authorUserName = localStorage.getItem("userLoginData");
 
   const getPostsData = async () => {
     const response = await fetch("http://localhost:8000/getPost");
@@ -22,6 +26,10 @@ const Posts = () => {
   }, [realTimePostFetch]);
 
   const createPostHandle = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+
     setShowCreatePost((prev) => !prev);
   };
 
@@ -43,7 +51,7 @@ const Posts = () => {
         />
       )}
       {postsData.map((postData, index, arr) => {
-        postData = arr[arr.length-index-1]
+        postData = arr[arr.length - index - 1];
         return <Post postData={postData} key={postData._id} />;
       })}
     </PostStyle>

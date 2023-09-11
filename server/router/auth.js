@@ -139,7 +139,7 @@ router.use("/uploads", express.static("uploads"));
 const upload = multer({ storage: storage });
 
 router.post("/createPost", upload.single("postImg"), async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
   const { userName, title, description, createdDate, currentTime } = req.body;
 
   let fullName;
@@ -155,7 +155,7 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
     const authorData = await User.findOne({ userName });
     fullName = authorData.fullName;
 
-    console.log("FullName === " + fullName);
+    // console.log("FullName === " + fullName);
 
     let authorsPost;
     try {
@@ -178,8 +178,8 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
       // console.log(err);
     }
 
-    console.log("newPostLikeShareList === ");
-    console.log(newPostLikeShareList);
+    // console.log("newPostLikeShareList === ");
+    // console.log(newPostLikeShareList);
 
     try {
       const newPost = await new UserSerialPost({
@@ -194,8 +194,8 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
         postLikeShareList: newPostLikeShareList._id,
       }).save();
 
-      console.log("newPost =====");
-      console.log(newPost);
+      // console.log("newPost =====");
+      // console.log(newPost);
 
       try {
         const updatedUserPost = await UserPosts.findOneAndUpdate(
@@ -210,11 +210,11 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
           }
         );
 
-        console.log("authorsPost ===== ");
-        console.log(updatedUserPost);
+        // console.log("authorsPost ===== ");
+        // console.log(updatedUserPost);
       } catch (err) {
-        console.log("authorsPost err ====");
-        console.log(err);
+        // console.log("authorsPost err ====");
+        // console.log(err);
       }
 
       if (authorsPost) {
@@ -242,14 +242,30 @@ router.get("/getPost", async (req, res) => {
   res.json(allPostData);
 });
 
+router.get("/getProfilePic/:userName", async (req, res) => {
+  const userName = req.params.userName;
+  // console.log(userName);
+  try {
+    const userData = await User.findOne({ userName });
+    if (!userData) {
+      return res.status(404).json({ message: "Content not found" });
+    }
+    // console.log(userData);
+    res.status(200).json({ profilePic: userData.profilePic });
+  } catch (err) {
+    // console.log(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.get("/getProfilePosts/:userName", async (req, res) => {
   const userName = req.params.userName;
-  console.log(userName);
+  // console.log(userName);
   try {
     let userAllPostIds = await UserPosts.findOne({ userName }).populate(
       "postData"
     );
-    
+
     if (!userAllPostIds) {
       return res.status(404).json({ message: "Content not found" });
     }
@@ -307,7 +323,7 @@ router.post(
         res.status(404).json({ message: "Content not found" });
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -342,7 +358,7 @@ router.post(
         res.status(404).json({ message: "Content not found" });
       }
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       res.status(500).json({ message: "Server error" });
     }
   }
@@ -379,6 +395,32 @@ router.get("/getProfileInfo/:userName", async (req, res) => {
       res.status(404).json({ message: "Content not found" });
     }
   } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/updateInfo/:userName", async (req, res) => {
+  const userName = req.params.userName;
+  const { fullName, email, bio } = req.body;
+  console.log(req.body);
+  try {
+    const updatedUser = await User.findOneAndUpdate(
+      { userName },
+      {
+        $set: {
+          fullName,
+          email,
+          bio,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Content not found" });
+    }
+    res.status(200).json({ message: "Successfully updated" });
+  } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });

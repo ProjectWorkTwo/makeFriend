@@ -18,7 +18,8 @@ const Form = styled.div`
     gap: 15px;
 
     input,
-    select {
+    select,
+    textarea {
       width: 100%;
       text-align: center;
       padding: 8px 15px;
@@ -27,6 +28,9 @@ const Form = styled.div`
       background: transparent;
       border: 2px solid var(--primaryColor);
       color: var(--primaryColor);
+    }
+    textarea{
+      resize: vertical;
     }
 
     .dobGender {
@@ -40,6 +44,9 @@ const Form = styled.div`
         align-items: flex-start;
         gap: 5px;
 
+        label{
+          user-select: none;
+        }
         select {
           width: 100%;
           height: 100%;

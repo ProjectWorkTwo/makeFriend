@@ -13,6 +13,16 @@ const Profile = () => {
 
   const { userName } = useParams();
 
+  const authorUserName = JSON.parse(
+    localStorage.getItem("userLoginData") || "{}"
+  ).userName;
+
+  useEffect(()=>{
+    showCreatePost? 
+    document.body.style.overflow = 'hidden': 
+    document.body.style.overflow = 'auto'
+  }, [showCreatePost])
+
   const getPostsData = async () => {
     try {
       const res = await fetch(
@@ -20,7 +30,6 @@ const Profile = () => {
       );
       const data = await res.json();
 
-      console.log(data);
 
       if (res.status !== 404 && res.status !== 500) {
         setPostsData((prev) => data);
@@ -44,12 +53,13 @@ const Profile = () => {
   const autoHideCreatePost = () => {
     setShowCreatePost((prev) => false);
   };
-
   return (
     <ProfileWrapper>
       <div className="wrapper">
         <ProfileInfo userName={userName} />
-        <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
+        {authorUserName === userName && (
+          <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
+        )}
         {showCreatePost && (
           <CreatePost
             setShowCreatePost={setShowCreatePost}

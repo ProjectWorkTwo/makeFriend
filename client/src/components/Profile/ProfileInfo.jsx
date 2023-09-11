@@ -7,10 +7,11 @@ import { FaCamera } from "react-icons/fa";
 import UpdateProfileForm from "./UpdateProfileForm";
 import ButtonStyle from "../styles/Button";
 
-import PropTypes, { string } from 'prop-types'
+import PropTypes, { string } from "prop-types";
 
 const ProfileInfo = ({ userName }) => {
   const [profileInfo, setProfileInfo] = useState({
+    userName,
     fullName: "",
     email: "",
     dob: "",
@@ -21,6 +22,11 @@ const ProfileInfo = ({ userName }) => {
     profileCover: profileDefaultCover,
   });
 
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const authorUserName = JSON.parse(
+    localStorage.getItem("userLoginData") || "{}"
+  ).userName;
   const monthNames = [
     "Jan",
     "Feb",
@@ -35,6 +41,12 @@ const ProfileInfo = ({ userName }) => {
     "Nov",
     "Dec",
   ];
+
+  useEffect(() => {
+    openEdit
+      ? (document.body.style.overflow = "hidden")
+      : (document.body.style.overflow = "auto");
+  }, [openEdit]);
 
   useEffect(() => {
     const getProfileInfo = async () => {
@@ -64,12 +76,12 @@ const ProfileInfo = ({ userName }) => {
         body: formData,
       }
     );
-    const { profileCover } = await res.json();
+    const { profileCover:tempProfileCover } = await res.json();
 
     setProfileInfo((prev) => ({
       ...profileInfo,
-      profileCover: profileCover
-        ? `http://localhost:8000/uploads/${profileCover}`
+      profileCover: tempProfileCover
+        ? `http://localhost:8000/uploads/${tempProfileCover}`
         : profileDefaultCover,
     }));
   };
@@ -93,9 +105,6 @@ const ProfileInfo = ({ userName }) => {
 
   const findDate = (dateInp) => {
     const date = new Date(dateInp);
-    console.log(date.getFullYear());
-    console.log(date.getMonth());
-    console.log(date.getDate());
     const currentDate = date.getDate();
     return `${currentDate < 10 ? "0" + currentDate : currentDate} ${
       monthNames[date.getMonth()]
@@ -106,36 +115,40 @@ const ProfileInfo = ({ userName }) => {
       <div className="wrapper">
         <div className="cover">
           <img src={profileInfo.profileCover} alt="" />
-          <form>
-            <input
-              type="file"
-              name="profilePic"
-              id="profileCoverPicInp"
-              hidden
-              onChange={handleProfileCover}
-              accept="image/*"
-            />
-            <label htmlFor="profileCoverPicInp">
-              <FaCamera />
-            </label>
-          </form>
-        </div>
-        <div className="profileDetails">
-          <div className="profilePic">
-            <img src={profileInfo.profilePic} alt="" />
+          {authorUserName === userName && (
             <form>
               <input
                 type="file"
                 name="profilePic"
-                id="profilePicInp"
+                id="profileCoverPicInp"
                 hidden
-                onChange={handleProfilePic}
+                onChange={handleProfileCover}
                 accept="image/*"
               />
-              <label htmlFor="profilePicInp">
+              <label htmlFor="profileCoverPicInp">
                 <FaCamera />
               </label>
             </form>
+          )}
+        </div>
+        <div className="profileDetails">
+          <div className="profilePic">
+            <img src={profileInfo.profilePic} alt="" />
+            {authorUserName === userName && (
+              <form>
+                <input
+                  type="file"
+                  name="profilePic"
+                  id="profilePicInp"
+                  hidden
+                  onChange={handleProfilePic}
+                  accept="image/*"
+                />
+                <label htmlFor="profilePicInp">
+                  <FaCamera />
+                </label>
+              </form>
+            )}
           </div>
           <div className="info">
             <div className="mainInfo">
@@ -143,25 +156,47 @@ const ProfileInfo = ({ userName }) => {
               <h5>{userName}</h5>
             </div>
             <ul>
-              <li><span>Email:</span> {profileInfo.email}</li>
-              <li><span>Gender:</span> {profileInfo.gender}</li>
-              <li><span>Birth Date:</span> {findDate(profileInfo.dob)}</li>
-              <li><span>Joined:</span> {findDate(profileInfo.joinDate)}</li>
+              <li>
+                <span>Email:</span> {profileInfo.email}
+              </li>
+              <li>
+                <span>Gender:</span> {profileInfo.gender}
+              </li>
+              <li>
+                <span>Birth Date:</span> {findDate(profileInfo.dob)}
+              </li>
+              <li>
+                <span>Joined:</span> {findDate(profileInfo.joinDate)}
+              </li>
             </ul>
-            <p className="bio">{profileInfo.bio}</p>
-            <ButtonStyle>Edit Profile</ButtonStyle>
+            {profileInfo.bio && <p className="bio">{profileInfo.bio}</p>}
+            {authorUserName === userName && (
+              <ButtonStyle
+                onClick={() => {
+                  setOpenEdit((prev) => true);
+                }}
+              >
+                Edit Profile
+              </ButtonStyle>
+            )}
           </div>
         </div>
       </div>
-
-      {/* <UpdateProfileForm /> */}
+      {openEdit && (
+        <UpdateProfileForm
+          setOpenEdit={setOpenEdit}
+          profileInfo={profileInfo}
+          setProfileInfo={setProfileInfo}
+          userName={userName}
+        />
+      )}
     </ProfileInfoWrapper>
   );
 };
 
 ProfileInfo.propTypes = {
-  userName: PropTypes.string
-}
+  userName: PropTypes.string,
+};
 export default ProfileInfo;
 
 const ProfileInfoWrapper = styled.div`
@@ -195,7 +230,6 @@ const ProfileInfoWrapper = styled.div`
             color: var(--primaryColor);
             top: 8px;
             left: 8px;
-            z-index: 1;
             cursor: pointer;
             background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(15px);
@@ -219,7 +253,7 @@ const ProfileInfoWrapper = styled.div`
       align-items: center;
       width: 90%;
       margin: 0 auto;
-      margin-top: -120px;
+      margin-top: -100px;
       box-shadow: rgba(255, 255, 255, 0.1) 0px 1px 1px 0px inset,
         rgba(50, 50, 93, 0.25) 0px 50px 100px -20px,
         rgba(0, 0, 0, 0.3) 0px 30px 60px -30px;
@@ -237,6 +271,8 @@ const ProfileInfoWrapper = styled.div`
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        border: 4px solid var(--primaryColor);
+        border-radius: 50%;
 
         &:hover {
           transform: scale(0.9);
@@ -260,7 +296,6 @@ const ProfileInfoWrapper = styled.div`
               color: var(--primaryColor);
               bottom: 0;
               right: 0;
-              z-index: 1;
               cursor: pointer;
               background: rgba(255, 255, 255, 0.3);
               backdrop-filter: blur(15px);
@@ -281,10 +316,16 @@ const ProfileInfoWrapper = styled.div`
           font-size: 18px;
           padding-bottom: 10px;
         }
-        p {
+        p.bio {
+          font-size: 17px;
           color: var(--lightText);
+          padding: 15px;
+          border: 2px solid var(--primaryColor);
+          border-left: none;
+          border-right: none;
+          margin: 10px 0;
         }
-        .mainInfo{
+        .mainInfo {
           border-bottom: 2px solid var(--primaryColor);
         }
         ul {
@@ -294,8 +335,8 @@ const ProfileInfoWrapper = styled.div`
           gap: 5px;
           padding: 10px 0;
 
-          li{
-            span{
+          li {
+            span {
               font-weight: 600;
             }
           }

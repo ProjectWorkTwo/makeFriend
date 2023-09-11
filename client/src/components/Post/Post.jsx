@@ -3,7 +3,7 @@ import { styled } from "styled-components";
 import avatar from "../../assets/avatar/avatar1.png";
 import { BsFillHeartFill } from "react-icons/bs";
 import { FaShare } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ShareAndLikeList from "./ShareAndLikeList";
 import DOMPurify from "dompurify";
 import PostImagePreview from "./PostImagePreview";
@@ -11,6 +11,7 @@ import PostImagePreview from "./PostImagePreview";
 import PropTypes from "prop-types";
 
 const Post = ({ postData }) => {
+  const navigate = useNavigate();
   const {
     fullName,
     userName,
@@ -21,9 +22,8 @@ const Post = ({ postData }) => {
     _id: postId,
     postImg,
   } = postData;
-  // const accountAuthorUserName = JSON.parse(
-  //   localStorage.getItem("userLoginData")
-  // );
+
+  const authorUserName = localStorage.getItem("userLoginData");
 
   const formateDescription = (description) => {
     return description
@@ -102,10 +102,18 @@ const Post = ({ postData }) => {
   // }, [liked]);
 
   const handleShowHideLike = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+
     setShowHideLike((prev) => true);
     setShowHideShare((prev) => false);
   };
   const handleShowHideShare = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+
     setShowHideShare((prev) => true);
     setShowHideLike((prev) => false);
   };
@@ -119,10 +127,17 @@ const Post = ({ postData }) => {
   };
 
   const showHideImagePreviewHandle = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+
     setShowHideImgPreview((prev) => !prev);
   };
 
   const handleToggleText = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
     setToggleText((prev) => !prev);
   };
 
@@ -147,7 +162,17 @@ const Post = ({ postData }) => {
     // });
   };
 
+  const handleShare = ()=>{
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+  }
+
   const addOrRemoveLike = () => {
+    if (!authorUserName) {
+      navigate("/login", { replace: true });
+    }
+
     UpdateLikeList();
     let existIndex = false;
     existIndex = totalLikeList.findIndex((element) => {
@@ -289,9 +314,7 @@ const Post = ({ postData }) => {
             </button> */}
             <button
               className={`like ${liked ? "active" : ""}`}
-              onClick={() => {
-                addOrRemoveLike();
-              }}
+              onClick={addOrRemoveLike}
             >
               <BsFillHeartFill />
             </button>
@@ -303,7 +326,7 @@ const Post = ({ postData }) => {
                 : totalShareList.length + " "}{" "}
               Shares
             </span>
-            <button className="share">
+            <button className="share" onClick={handleShare}>
               <FaShare />
             </button>
           </div>
@@ -351,6 +374,10 @@ const PostStyle = styled.div`
       height: 80px;
       border-radius: 50%;
       overflow: hidden;
+      background: url(${avatar});
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
 
       img {
         width: 100%;

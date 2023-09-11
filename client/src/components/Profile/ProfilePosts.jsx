@@ -25,6 +25,7 @@ ProfilePosts.propTypes = {
 export default ProfilePosts;
 
 const ProfilePostsWrapper = styled.div`
+  margin-top: 25px;
   width: 100%;
   display: flex;
   flex-direction: column;
