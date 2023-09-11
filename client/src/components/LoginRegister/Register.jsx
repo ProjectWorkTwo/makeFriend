@@ -4,7 +4,6 @@ import FormMainWrapper from "../styles/FormMainWrapper";
 import Button from "../styles/Button";
 import Form from "../styles/Form";
 
-
 import { Link, useNavigate } from "react-router-dom";
 import LoginText from "./LoginText";
 import ErrorMessage from "../ErrorMessage";
@@ -20,8 +19,11 @@ const Register = () => {
     userName: "",
     email: "",
     password: "",
+    bio: "",
     dob: "",
     gender: "custom",
+    profilePic: "",
+    profileCover: "",
   });
 
   const handleChangeEvent = (e) => {
@@ -53,21 +55,18 @@ const Register = () => {
 
     if (res.status === 422 || !data) {
       console.log(data.userNameExist, data.emailExist);
-      if(data.userNameExist){
-        setUserNameToggle(prev => true);
-      }else{
-        setUserNameToggle(prev => false);
+      if (data.userNameExist) {
+        setUserNameToggle((prev) => true);
+      } else {
+        setUserNameToggle((prev) => false);
       }
 
-      if(data.emailExist){
-        setUserEmailToggle(prev => true);
-      }else{
-        setUserEmailToggle(prev => false);
+      if (data.emailExist) {
+        setUserEmailToggle((prev) => true);
+      } else {
+        setUserEmailToggle((prev) => false);
       }
-
-
     } else {
-
       window.alert("registration was successful");
       navigate("/login", { replace: true });
     }
@@ -144,8 +143,12 @@ const Register = () => {
               </div>
             </div>
             <Button type="submit">Register</Button>
-            {userNameToggle && <ErrorMessage message="username already exist" />}
-            {userEmailToggle && <ErrorMessage message="email addreess already exist" />}
+            {userNameToggle && (
+              <ErrorMessage message="username already exist" />
+            )}
+            {userEmailToggle && (
+              <ErrorMessage message="email addreess already exist" />
+            )}
             <Link to="/login">
               <p>If yet not registered?</p>
             </Link>

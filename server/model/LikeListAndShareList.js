@@ -5,7 +5,7 @@ const eachPostLikeShareList = new mongoose.Schema({
     {
       likedUserName: {
         type: String,
-        unique: false,
+        unique: true,
         required: false,
       },
       fullName: {
@@ -19,7 +19,7 @@ const eachPostLikeShareList = new mongoose.Schema({
     {
       useredUserName: {
         type: String,
-        unique: false,
+        unique: true,
         required: false,
       },
       fullName: {

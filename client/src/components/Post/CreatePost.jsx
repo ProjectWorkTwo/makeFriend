@@ -26,7 +26,7 @@ const monthNames = [
 ];
 
 const CreatePost = ({
-  useShowCreatePost,
+  setShowCreatePost,
   realTimeFetchPostData,
   autoHideCreatePost,
 }) => {
@@ -53,7 +53,7 @@ const CreatePost = ({
   };
 
   const handleImgUpload = (e) => {
-    console.log(e.target.file);
+    // console.log(e.target.files[0]);
     setCreatePostData((prev) => ({
       ...createPostData,
       postImg: e.target.files[0] || "",
@@ -87,11 +87,11 @@ const CreatePost = ({
 
     // setCreatePostData((prev) => postData);
 
-    console.log(createPostData);
     const formData = new FormData();
     for (let key in postData) {
       formData.append(key, createPostData[key]);
     }
+    console.log('formData ============= ');
     console.log(formData);
     formData.append("createdDate", getCurrentDate());
     formData.append("currentTime", "" + date.getTime());
@@ -118,14 +118,9 @@ const CreatePost = ({
   return (
     <CreatePostSyle>
       <div className="wrapper">
-        {/* <div className="closeIcon">
-          <FaXmark
-            
-          />
-        </div> */}
         <CloseIcon
           onClick={() => {
-            useShowCreatePost((prev) => !prev);
+            setShowCreatePost((prev) => !prev);
           }}
         >
           <FaXmark />
@@ -199,30 +194,6 @@ const CreatePostSyle = styled.div`
       rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
     padding: 20px;
     text-align: center;
-
-    /* .closeIcon {
-      position: absolute;
-      right: 20px;
-      top: 20px;
-      background: rgba(0, 0, 0, 0);
-      display: grid;
-      place-items: center;
-      height: 35px;
-      width: 35px;
-      border-radius: 50%;
-      transition: 0.15s ease-in-out;
-
-      &:hover {
-        background: rgba(0, 0, 0, 0.1);
-      }
-
-      svg {
-        width: 25px;
-        height: 25px;
-        color: var(--primaryColor);
-        cursor: pointer;
-      }
-    } */
 
     h1 {
       padding-bottom: 15px;

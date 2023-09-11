@@ -5,6 +5,7 @@ import LoginPage from "./components/LoginRegister/LoginPage";
 import { Routes, Route } from "react-router-dom";
 import Register from "./components/LoginRegister/Register";
 import Login from "./components/LoginRegister/Login";
+import Profile from "./components/Profile/Profile";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/profile/:userName" element={<Profile />} />
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </>

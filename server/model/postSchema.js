@@ -6,7 +6,12 @@ const postSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  postData: [],
+  postData: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'userSerialPost'
+    }
+  ],
 });
 
 const UserPosts = mongoose.model("userPost", postSchema);

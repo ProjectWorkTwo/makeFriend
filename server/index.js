@@ -12,8 +12,24 @@ require('./db/connection')
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-// app.use(cors({credentials: true, origin: 'http://localhost:5173'}))
-app.use(cors())
+
+
+// Configure CORS to allow requests from http://localhost:5173
+const allowedOrigins = ['http://localhost:5173'];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+};
+
+app.use(cors(corsOptions));
+
+
 app.use(allRouter);
 const User = require('./model/userSchema');
 

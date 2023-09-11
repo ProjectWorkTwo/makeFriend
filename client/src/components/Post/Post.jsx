@@ -19,9 +19,9 @@ const Post = ({ postData }) => {
     _id: postId,
     postImg,
   } = postData;
-  const accountAuthorUserName = JSON.parse(
-    localStorage.getItem("userLoginData")
-  );
+  // const accountAuthorUserName = JSON.parse(
+  //   localStorage.getItem("userLoginData")
+  // );
 
   const formateDescription = (description) => {
     return description
@@ -41,25 +41,51 @@ const Post = ({ postData }) => {
   const [showHideImgPreview, setShowHideImgPreview] = useState(false);
 
   const PostLikeShareList = async () => {
-    const res = await fetch("http://localhost:8000/getLikeShareList", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        postLikeShareList,
-      }),
-    });
-    const { likeList, shareList } = await res.json();
-    console.log(likeList, shareList);
+    // const res = await fetch(`http://localhost:8000/getLikeShareList/${postId}`);
 
-    setTotalLikeList((prev) => likeList);
-    setTotalShareList((prev) => shareList);
+    // const data = await res.json();
+
+    // const { likeList, shareList } = data;
+    // console.log(likeList, shareList);
+
+    // let isUserLikedPost = -1;
+
+    // if (likeList.length) {
+    //   isUserLikedPost = likeList.findIndex(
+    //     (user) => user.userName === userName
+    //   );
+    // }
+
+    // if (isUserLikedPost === -1) {
+    //   setLiked((prev) => false);
+    // } else {
+    //   setLiked((prev) => true);
+    // }
+
+    // setTotalLikeList((prev) => likeList);
+    // setTotalShareList((prev) => shareList);
   };
 
   useEffect(() => {
     PostLikeShareList();
   }, []);
+
+  // const UpdateLikeList = async () => {
+  //   console.log(totalLikeList);
+  //   const res = await fetch(`http://localhost:8000/getLikeShareList/${postId}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(
+  //       {totalLikeList, liked, fullName}
+  //     ),
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   UpdateLikeList();
+  // }, [liked]);
 
   const handleShowHideLike = () => {
     setShowHideLike((prev) => true);
@@ -77,22 +103,80 @@ const Post = ({ postData }) => {
   const closeImgPreview = () => {
     setShowHideImgPreview(false);
   };
-
+  
   const showHideImagePreviewHandle = () => {
     setShowHideImgPreview((prev) => !prev);
   };
-
+  
   const handleToggleText = () => {
     setToggleText((prev) => !prev);
   };
-
+  
   const resetDescription = () => {
     return description.length > 20
-      ? toogleText
-        ? formateDescription(description)
-        : formateDescription(descriptionShort)
-      : formateDescription(description);
+    ? toogleText
+    ? formateDescription(description)
+    : formateDescription(descriptionShort)
+    : formateDescription(description);
   };
+  
+  const UpdateLikeList = async () => {
+    // console.log(totalLikeList);
+    // const res = await fetch(`http://localhost:8000/getLikeShareList/${postId}`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(
+    //     {totalLikeList, liked, fullName, userName, postId}
+    //   ),
+    // });
+  };
+
+  const addOrRemoveLike = () => {
+    UpdateLikeList();
+    let existIndex = false;
+    existIndex = totalLikeList.findIndex((element) => {
+      // console.log(element);
+      return element.userName === userName;
+    });
+    if (existIndex === -1) {
+      setTotalLikeList((prev) => [
+        ...prev,
+        {
+          userName,
+          fullName,
+        },
+      ]);
+      console.log(totalLikeList);
+      setLiked((prev) => true);
+    } else {
+      totalLikeList.splice(existIndex, 1);
+      setTotalLikeList((prev) => totalLikeList);
+      console.log(totalLikeList);
+      setLiked((prev) => false);
+    }
+    // console.log(liked);
+    // const userData = {
+    //   likedUserName: userName,
+    //   fullName,
+    // };
+    // console.log(
+    //   totalLikeList.find(
+    //     (data) =>
+    //       data.likedUserName === userData.likedUserName &&
+    //       data.fullName === userData.fullName
+    //   )
+    // );
+    // totalLikeList = Array.from(new Set([...totalLikeList, {
+    //   likedUserName: userName,
+    //   fullName
+    // }]));
+    // console.log(totalLikeList);
+    // console.log(isExist);
+    // if(totalLikeList.includes(userName))
+  };
+
 
   const likeHandle = async () => {
     // const res = await fetch("http://localhost:8000/likingPost", {
@@ -184,9 +268,17 @@ const Post = ({ postData }) => {
                 : totalLikeList.length + " "}
               Likes
             </span>
-            <button
+            {/* <button
               className={`like ${liked ? "active" : ""}`}
               onClick={likeHandle}
+            >
+              <BsFillHeartFill />
+            </button> */}
+            <button
+              className={`like ${liked ? "active" : ""}`}
+              onClick={() => {
+                addOrRemoveLike()
+              }}
             >
               <BsFillHeartFill />
             </button>

@@ -37,7 +37,7 @@ const Posts = () => {
       <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
       {showCreatePost && (
         <CreatePost
-          useShowCreatePost={setShowCreatePost}
+          setShowCreatePost={setShowCreatePost}
           realTimeFetchPostData={realTimeFetchPostData}
           autoHideCreatePost={autoHideCreatePost}
         />

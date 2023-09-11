@@ -28,12 +28,7 @@ const ImgPreview = styled.figure`
 
   img {
     width: 90%;
-    max-width: 500px;
     height: 90%;
-    max-height: 600px;
     object-fit: contain;
-  }
-  CloseIcon{
-    background: red !important;
   }
 `;

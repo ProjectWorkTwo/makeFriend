@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const ShareAndLikeList = ({ reacterList, closeShareAndLikePopUp }) => {
   return (
     <ShareAndLikeListStyle>
-      <div className="wrapper">
+      <div className="wrapper" >
         <FaXmark onClick={() => closeShareAndLikePopUp()} />
         <h4>Who liked your post:</h4>
         <div className="reactedList">
