@@ -3,15 +3,14 @@ import { styled } from "styled-components";
 import avatar from "../../assets/avatar/avatar1.png";
 import { BsFillHeartFill } from "react-icons/bs";
 import { FaShare } from "react-icons/fa";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ShareAndLikeList from "./ShareAndLikeList";
 import DOMPurify from "dompurify";
 import PostImagePreview from "./PostImagePreview";
 
 import PropTypes from "prop-types";
 
-const Post = ({ postData }) => {
-  const navigate = useNavigate();
+const Post = ({ postData, setShowGoToLogin }) => {
   const {
     fullName,
     userName,
@@ -103,7 +102,7 @@ const Post = ({ postData }) => {
 
   const handleShowHideLike = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
 
     setShowHideLike((prev) => true);
@@ -111,7 +110,7 @@ const Post = ({ postData }) => {
   };
   const handleShowHideShare = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
 
     setShowHideShare((prev) => true);
@@ -128,7 +127,7 @@ const Post = ({ postData }) => {
 
   const showHideImagePreviewHandle = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
 
     setShowHideImgPreview((prev) => !prev);
@@ -136,7 +135,7 @@ const Post = ({ postData }) => {
 
   const handleToggleText = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
     setToggleText((prev) => !prev);
   };
@@ -164,13 +163,13 @@ const Post = ({ postData }) => {
 
   const handleShare = ()=>{
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
   }
 
   const addOrRemoveLike = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
 
     UpdateLikeList();

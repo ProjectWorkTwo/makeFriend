@@ -3,10 +3,10 @@ import Post from "./Post";
 import styled from "styled-components";
 import CreatePost from "./CreatePost";
 import ButtonStyle from "../styles/Button";
-import { useNavigate } from "react-router-dom";
+import GoToLogin from "../GoToLogin";
 
 const Posts = () => {
-  const navigate = useNavigate();
+  const [showGoToLogin, setShowGoToLogin] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postsData, setPostsData] = useState([]);
   const [realTimePostFetch, setRealTimePostFetch] = useState(Math.random());
@@ -17,7 +17,6 @@ const Posts = () => {
     const response = await fetch("http://localhost:8000/getPost");
     const data = await response.json();
 
-    // console.log(data);
     setPostsData((prev) => data);
   };
 
@@ -27,7 +26,7 @@ const Posts = () => {
 
   const createPostHandle = () => {
     if (!authorUserName) {
-      navigate("/login", { replace: true });
+      return setShowGoToLogin((prev) => true);
     }
 
     setShowCreatePost((prev) => !prev);
@@ -52,8 +51,16 @@ const Posts = () => {
       )}
       {postsData.map((postData, index, arr) => {
         postData = arr[arr.length - index - 1];
-        return <Post postData={postData} key={postData._id} />;
+        return (
+          <Post
+            postData={postData}
+            key={postData._id}
+            setShowGoToLogin={setShowGoToLogin}
+          />
+        );
       })}
+
+      {showGoToLogin && <GoToLogin setShowGoToLogin={setShowGoToLogin} />}
     </PostStyle>
   );
 };

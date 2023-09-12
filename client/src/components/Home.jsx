@@ -13,7 +13,7 @@ const Home = () => {
   console.log(showProfile);
   return (
     <>
-      <Posts />
+      <Posts/>
     </>
   );
 };
