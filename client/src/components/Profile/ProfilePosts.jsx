@@ -1,18 +1,15 @@
 import React, { useEffect, useState } from "react";
-import Post from "../Post/Post";
 import styled from "styled-components";
 
 import PropTypes from "prop-types";
+import Posts from "../Post/Posts";
 
-const ProfilePosts = ({ postsData }) => {
+const ProfilePosts = ({ userName }) => {
   return (
     <ProfilePostsWrapper>
       <h1>Profile posts</h1>
       <div className="postWrapper">
-        {postsData.map((postData, index, arr) => {
-          postData = arr[arr.length - index - 1];
-          return <Post postData={postData} key={postData._id} />;
-        })}
+        <Posts postOwner={userName} />
       </div>
     </ProfilePostsWrapper>
   );

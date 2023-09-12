@@ -92,6 +92,7 @@ const CreatePost = ({
     formData.append("createdDate", getCurrentDate());
     formData.append("currentTime", "" + date.getTime());
 
+    console.log(formData);
     const res = await fetch("http://localhost:8000/createPost", {
       method: "POST",
       body: formData,

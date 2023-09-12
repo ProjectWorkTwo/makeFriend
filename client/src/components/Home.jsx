@@ -10,7 +10,6 @@ const Home = () => {
   if (!localStorage.getItem("userLoginData")) {
     navigate("/register", { replace: true });
   }
-  console.log(showProfile);
   return (
     <>
       <Posts/>

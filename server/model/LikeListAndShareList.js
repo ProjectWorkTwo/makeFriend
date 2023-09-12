@@ -5,28 +5,26 @@ const eachPostLikeShareList = new mongoose.Schema({
     {
       likedUserName: {
         type: String,
-        unique: true,
-        required: false,
       },
       fullName: {
         type: String,
-        unique: false,
-        required: false,
       },
+      profilePic: {
+        type: String
+      }
     },
   ],
   shareList: [
     {
       useredUserName: {
         type: String,
-        unique: true,
-        required: false,
       },
       fullName: {
         type: String,
-        unique: false,
-        required: false,
       },
+      profilePic: {
+        type: String
+      }
     },
   ],
 });

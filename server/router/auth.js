@@ -139,10 +139,10 @@ router.use("/uploads", express.static("uploads"));
 const upload = multer({ storage: storage });
 
 router.post("/createPost", upload.single("postImg"), async (req, res) => {
-  // console.log(req.body);
   const { userName, title, description, createdDate, currentTime } = req.body;
 
   let fullName;
+  let authorProfilePic;
 
   let postImg;
   if (req.file) {
@@ -154,8 +154,7 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
   try {
     const authorData = await User.findOne({ userName });
     fullName = authorData.fullName;
-
-    // console.log("FullName === " + fullName);
+    authorProfilePic = authorData.authorProfilePic;
 
     let authorsPost;
     try {
@@ -170,16 +169,15 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
 
     let newPostLikeShareList;
     try {
-      newPostLikeShareList = await new PostLikeShareList({
+      newPostLikeShareList = new PostLikeShareList({
         likeList: [],
         shareList: [],
-      }).save();
-    } catch (err) {
-      // console.log(err);
-    }
+      });
 
-    // console.log("newPostLikeShareList === ");
-    // console.log(newPostLikeShareList);
+      await newPostLikeShareList.save();
+    } catch (err) {
+      console.log(err);
+    }
 
     try {
       const newPost = await new UserSerialPost({
@@ -194,9 +192,6 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
         postLikeShareList: newPostLikeShareList._id,
       }).save();
 
-      // console.log("newPost =====");
-      // console.log(newPost);
-
       try {
         const updatedUserPost = await UserPosts.findOneAndUpdate(
           { userName },
@@ -209,11 +204,7 @@ router.post("/createPost", upload.single("postImg"), async (req, res) => {
             new: true,
           }
         );
-
-        // console.log("authorsPost ===== ");
-        // console.log(updatedUserPost);
       } catch (err) {
-        // console.log("authorsPost err ====");
         // console.log(err);
       }
 

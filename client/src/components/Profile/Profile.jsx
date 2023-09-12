@@ -8,7 +8,7 @@ import ButtonStyle from "../styles/Button";
 
 const Profile = () => {
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [postsData, setPostsData] = useState([]);
+  // const [postsData, setPostsData] = useState([]);
   const [realTimePostFetch, setRealTimePostFetch] = useState(Math.random());
 
   const { userName } = useParams();
@@ -39,9 +39,9 @@ const Profile = () => {
     }
   };
 
-  useEffect(() => {
-    getPostsData();
-  }, [realTimePostFetch]);
+  // useEffect(() => {
+  //   getPostsData();
+  // }, [realTimePostFetch]);
 
   const createPostHandle = () => {
     setShowCreatePost((prev) => !prev);
@@ -57,9 +57,9 @@ const Profile = () => {
     <ProfileWrapper>
       <div className="wrapper">
         <ProfileInfo userName={userName} />
-        {authorUserName === userName && (
+        {/* {authorUserName === userName && (
           <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
-        )}
+        )} */}
         {showCreatePost && (
           <CreatePost
             setShowCreatePost={setShowCreatePost}
@@ -67,7 +67,8 @@ const Profile = () => {
             autoHideCreatePost={autoHideCreatePost}
           />
         )}
-        <ProfilePosts postsData={postsData} />
+        {/* <ProfilePosts postsData={postsData} /> */}
+        <ProfilePosts userName={userName} />
       </div>
     </ProfileWrapper>
   );

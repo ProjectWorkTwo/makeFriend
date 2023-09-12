@@ -5,17 +5,24 @@ import CreatePost from "./CreatePost";
 import ButtonStyle from "../styles/Button";
 import GoToLogin from "../GoToLogin";
 
-const Posts = () => {
+const Posts = ({ postOwner }) => {
   const [showGoToLogin, setShowGoToLogin] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [postsData, setPostsData] = useState([]);
   const [realTimePostFetch, setRealTimePostFetch] = useState(Math.random());
 
-  const authorUserName = localStorage.getItem("userLoginData");
+  const authorUserName = JSON.parse(
+    localStorage.getItem("userLoginData") || "{}"
+  ).userName;
 
   const getPostsData = async () => {
-    const response = await fetch("http://localhost:8000/getPost");
-    const data = await response.json();
+    let res;
+    if (postOwner) {
+      res = await fetch(`http://localhost:8000/getProfilePosts/${postOwner}`);
+    } else {
+      res = await fetch("http://localhost:8000/getPost");
+    }
+    const data = await res.json();
 
     setPostsData((prev) => data);
   };
@@ -39,9 +46,20 @@ const Posts = () => {
     setShowCreatePost((prev) => false);
   };
 
+  const createButtonAccess = () => {
+    if (!postOwner) {
+      return true;
+    } else if (postOwner === authorUserName) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <PostStyle>
-      <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
+      {createButtonAccess() && (
+        <ButtonStyle onClick={createPostHandle}>Create Post</ButtonStyle>
+      )}
       {showCreatePost && (
         <CreatePost
           setShowCreatePost={setShowCreatePost}
